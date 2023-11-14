@@ -1,6 +1,6 @@
 ﻿namespace GameboyEmulator
 {
-    partial class Form1
+    partial class GameboyForm
     {
         /// <summary>
         ///  Required designer variable.
@@ -188,6 +188,7 @@
             button1.TabStop = false;
             button1.Text = "Off";
             button1.UseVisualStyleBackColor = false;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
@@ -202,6 +203,7 @@
             button2.TabStop = false;
             button2.Text = "On";
             button2.UseVisualStyleBackColor = false;
+            button2.Click += button2_Click;
             // 
             // tableLayoutPanel5
             // 
@@ -251,6 +253,7 @@
             button3.TabStop = false;
             button3.Text = "/\\";
             button3.UseVisualStyleBackColor = false;
+            button3.Click += button3_Click;
             // 
             // button4
             // 
@@ -265,6 +268,7 @@
             button4.TabStop = false;
             button4.Text = ">";
             button4.UseVisualStyleBackColor = false;
+            button4.Click += button4_Click;
             // 
             // button5
             // 
@@ -279,6 +283,7 @@
             button5.TabStop = false;
             button5.Text = "\\/";
             button5.UseVisualStyleBackColor = false;
+            button5.Click += button5_Click;
             // 
             // button6
             // 
@@ -293,6 +298,7 @@
             button6.TabStop = false;
             button6.Text = "<";
             button6.UseVisualStyleBackColor = false;
+            button6.Click += button6_Click;
             // 
             // button7
             // 
@@ -307,6 +313,7 @@
             button7.TabStop = false;
             button7.Text = "A";
             button7.UseVisualStyleBackColor = false;
+            button7.Click += button7_Click;
             // 
             // button9
             // 
@@ -321,6 +328,7 @@
             button9.TabStop = false;
             button9.Text = "Select";
             button9.UseVisualStyleBackColor = false;
+            button9.Click += button9_Click;
             // 
             // button10
             // 
@@ -335,6 +343,7 @@
             button10.TabStop = false;
             button10.Text = "Start";
             button10.UseVisualStyleBackColor = false;
+            button10.Click += button10_Click;
             // 
             // button8
             // 
@@ -349,6 +358,7 @@
             button8.TabStop = false;
             button8.Text = "B";
             button8.UseVisualStyleBackColor = false;
+            button8.Click += button8_Click;
             // 
             // Form1
             // 
@@ -365,6 +375,7 @@
             MinimumSize = new Size(594, 1026);
             Name = "Form1";
             SizeGripStyle = SizeGripStyle.Hide;
+            StartPosition = FormStartPosition.Manual;
             Text = "Gameboy Emulator";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
