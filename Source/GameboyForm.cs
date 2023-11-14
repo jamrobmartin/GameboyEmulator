@@ -34,13 +34,19 @@ namespace GameboyEmulator
 
             this.Location = new Point(0, 0);
 
+            DebugWindow debugWindow = new DebugWindow();
+            debugWindow.Show();
+            debugWindow.Location = new Point(this.Width, 0);
+
             ButtonPressed += GameboyForm_ButtonPressed;
+            
         }
 
         private void GameboyForm_ButtonPressed(object sender, ButtonPressedEventArgs e)
         {
-            MessageBox.Show("Button Pressed: " + e.buttonPressed.ToString());
+            Logger.WriteLine("Button Pressed: " + e.buttonPressed.ToString(), Logger.LogLevel.Debug);
         }
+
 
         // Button Pressed Event
         public delegate void ButtomPressedEventHandler(object sender, ButtonPressedEventArgs e);
