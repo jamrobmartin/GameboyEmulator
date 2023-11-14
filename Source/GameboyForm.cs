@@ -39,6 +39,7 @@ namespace GameboyEmulator
             debugWindow.Location = new Point(this.Width, 0);
 
             ButtonPressed += GameboyForm_ButtonPressed;
+            ButtonPressed += Emulator.Instance.GameboyForm_ButtonPressed;
             
         }
 
