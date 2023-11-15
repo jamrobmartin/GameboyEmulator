@@ -155,6 +155,8 @@ namespace GameboyEmulator
 
         public Instruction Instruction { get; set; }
 
+        public Word InstructionAddress { get; set; }
+
 
         #endregion
 
@@ -166,6 +168,7 @@ namespace GameboyEmulator
             H = 0; L = 0;
             SP = 0; PC = 0;
             InstructionRegister = 0;
+            InstructionAddress = 0;
             Instruction = new Instruction();
         }
 
@@ -180,6 +183,7 @@ namespace GameboyEmulator
             HL = 0x4D01;
 
             InstructionRegister = 0;
+            InstructionAddress = 0;
             Instruction = new Instruction();
         }
 
@@ -194,6 +198,7 @@ namespace GameboyEmulator
 
         public void FetchInstruction()
         {
+            InstructionAddress = PC;
             InstructionRegister = Bus.Read(PC++);
             Instruction = new Instruction(InstructionRegister);
 
@@ -206,7 +211,7 @@ namespace GameboyEmulator
 
         public void ExecuteInstruction()
         {
-
+            Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Debug);
         }
 
 

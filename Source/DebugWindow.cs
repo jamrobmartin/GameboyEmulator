@@ -35,12 +35,12 @@ namespace GameboyEmulator
                     textBox1.AppendText(level + msg);
                 }
             }
-            catch 
+            catch
             {
                 // Have to include the try/catch in case the application tries to close mid Invoke
             }
         }
 
-        
+
     }
 }

@@ -24,7 +24,7 @@ namespace GameboyEmulator
         //  FF80    FFFE    High RAM(HRAM)
         //  FFFF    FFFF    Interrupt Enable register(IE)
 
-        public static byte Read(Word address)
+        public static Byte Read(Word address)
         {
             if (address >= 0x0000 && address <= 0x7FFF) { return Cartridge.Instance.Read(address); }
             if (address >= 0x8000 && address <= 0x9FFF) { return RAM.Instance.Read(address); }
@@ -41,7 +41,7 @@ namespace GameboyEmulator
 
         }
 
-        public static void Write(Word address, byte value) 
+        public static void Write(Word address, Byte value) 
         {
 
         }

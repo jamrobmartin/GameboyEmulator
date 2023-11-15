@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -367,6 +368,33 @@ namespace GameboyEmulator
             Register2 = register2;
             ConditionType = condition;
             Parameter = param;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.Append(OpCode.ToHexString());
+            sb.Append(" - ");
+
+            sb.Append(InstructionType.ToString());
+            sb.Append(" - ");
+
+            sb.Append(AddressingMode.ToString());
+            sb.Append(" - ");
+
+            sb.Append(Register1.ToString());
+            sb.Append(" - ");
+
+            sb.Append(Register2.ToString());
+            sb.Append(" - ");
+
+            sb.Append(ConditionType.ToString());
+            sb.Append(" - ");
+
+            sb.Append(Parameter.ToString());
+            
+            return sb.ToString();
         }
 
 

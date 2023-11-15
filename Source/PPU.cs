@@ -13,12 +13,12 @@ namespace GameboyEmulator
         public static PPU Instance { get; private set; } = lazy.Value;
         #endregion
 
-        public byte Read(Word address)
+        public Byte Read(Word address)
         {
             throw new Exception("PPU - Tried to read memory location: " + address.ToHexString());
         }
 
-        public void Write(Word address, byte value)
+        public void Write(Word address, Byte value)
         {
 
         }

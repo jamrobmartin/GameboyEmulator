@@ -49,6 +49,7 @@
             button9 = new Button();
             button10 = new Button();
             button8 = new Button();
+            insertROMToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -69,6 +70,7 @@
             // 
             // fileToolStripMenuItem
             // 
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { insertROMToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
@@ -360,6 +362,13 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
+            // insertROMToolStripMenuItem
+            // 
+            insertROMToolStripMenuItem.Name = "insertROMToolStripMenuItem";
+            insertROMToolStripMenuItem.Size = new Size(180, 22);
+            insertROMToolStripMenuItem.Text = "Insert ROM...";
+            insertROMToolStripMenuItem.Click += insertROMToolStripMenuItem_Click;
+            // 
             // GameboyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -413,5 +422,6 @@
         private Button button10;
         private Panel panel2;
         private Panel panel3;
+        private ToolStripMenuItem insertROMToolStripMenuItem;
     }
 }

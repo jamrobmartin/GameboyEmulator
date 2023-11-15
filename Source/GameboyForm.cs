@@ -1,3 +1,5 @@
+using System.Text;
+
 namespace GameboyEmulator
 {
 
@@ -99,6 +101,21 @@ namespace GameboyEmulator
         private void GameboyForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             Emulator.Instance.TurnPowerOff();
+        }
+
+        private void insertROMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            var result = openFileDialog.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                bool inserted = Cartridge.Instance.InsertCartridge(openFileDialog.FileName);
+                StringBuilder sb = new StringBuilder();
+                sb.Append("File Location: " + openFileDialog.FileName);
+                sb.Append(" - Inserted: " + inserted.ToString());
+                Logger.WriteLine("Cartridge Insert Status - " + sb.ToString(), Logger.LogLevel.Information);
+            }
         }
     }
 }
