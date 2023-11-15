@@ -29,13 +29,13 @@ namespace GameboyEmulator
 
     public class Instruction
     {
-        Byte OpCode = 0xDD;
-        eInstructionType InstructionType = eInstructionType.None;
-        eAddressingMode AddressingMode = eAddressingMode.None;
-        eRegisterType Register1 = eRegisterType.None;
-        eRegisterType Register2 = eRegisterType.None;
-        eConditionType ConditionType = eConditionType.None;
-        Byte Parameter = 0;
+        public Byte OpCode = 0xDD;
+        public eInstructionType InstructionType = eInstructionType.None;
+        public eAddressingMode AddressingMode = eAddressingMode.None;
+        public eRegisterType Register1 = eRegisterType.None;
+        public eRegisterType Register2 = eRegisterType.None;
+        public eConditionType ConditionType = eConditionType.None;
+        public Byte Parameter = 0;
 
         public Instruction() { }
 
@@ -368,6 +368,14 @@ namespace GameboyEmulator
             Register2 = register2;
             ConditionType = condition;
             Parameter = param;
+        }
+
+        public string Mnemonic()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append(InstructionType);
+
+            return sb.ToString();
         }
 
         public override string ToString()

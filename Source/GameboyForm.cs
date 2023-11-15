@@ -132,5 +132,11 @@ namespace GameboyEmulator
         {
             Logger.Level = Logger.LogLevel.Debug;
         }
+
+        private void implementedInstructionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            ImplementedInstructionsForm form = new ImplementedInstructionsForm();
+            form.ShowDialog();
+        }
     }
 }
