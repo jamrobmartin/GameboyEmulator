@@ -38,6 +38,9 @@ namespace GameboyEmulator
 
         public void ThreadLoop()
         {
+            // Init() Calls
+            CPU.Instance.Init();
+
             while (PoweredOn)
             {
                 Logger.WriteLine("Clock", Logger.LogLevel.Debug);

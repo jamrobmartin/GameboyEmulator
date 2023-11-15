@@ -360,7 +360,7 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
-            // Form1
+            // GameboyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -373,10 +373,11 @@
             MaximumSize = new Size(594, 1026);
             MinimizeBox = false;
             MinimumSize = new Size(594, 1026);
-            Name = "Form1";
+            Name = "GameboyForm";
             SizeGripStyle = SizeGripStyle.Hide;
             StartPosition = FormStartPosition.Manual;
             Text = "Gameboy Emulator";
+            FormClosing += GameboyForm_FormClosing;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);

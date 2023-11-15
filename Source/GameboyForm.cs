@@ -1,28 +1,6 @@
 namespace GameboyEmulator
 {
-    public enum eButtonPress
-    {
-        On,
-        Off,
-        Up,
-        Down,
-        Left,
-        Right,
-        A,
-        B,
-        Start,
-        Select
-    }
 
-    public class ButtonPressedEventArgs : EventArgs
-    {
-        public eButtonPress buttonPressed {  get; set; }
-
-        public ButtonPressedEventArgs(eButtonPress buttonPressed)
-        { 
-            this.buttonPressed = buttonPressed; 
-        }
-    }
 
     public partial class GameboyForm : Form
     {
@@ -40,7 +18,7 @@ namespace GameboyEmulator
 
             ButtonPressed += GameboyForm_ButtonPressed;
             ButtonPressed += Emulator.Instance.GameboyForm_ButtonPressed;
-            
+
         }
 
         private void GameboyForm_ButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -116,6 +94,11 @@ namespace GameboyEmulator
         {
             // Select
             FireButtonPressedEvent(eButtonPress.Select);
+        }
+
+        private void GameboyForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Emulator.Instance.TurnPowerOff();
         }
     }
 }
