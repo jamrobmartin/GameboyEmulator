@@ -8,7 +8,7 @@ namespace GameboyEmulator
 {
     public static class Logger
     {
-        public static LogLevel Level { get; set; } = LogLevel.Debug;
+        public static LogLevel Level { get; set; } = LogLevel.Information;
 
         public enum LogLevel
         {

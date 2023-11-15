@@ -64,7 +64,7 @@ namespace GameboyEmulator
 
         public void Write(Word address, Byte value)
         {
-
+            throw new Exception("Cartridge - Tried to Write memory location: " + address.ToHexString());
         }
     }
 }

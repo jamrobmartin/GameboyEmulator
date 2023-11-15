@@ -41,6 +41,8 @@ namespace GameboyEmulator
             // Init() Calls
             CPU.Instance.Init();
 
+            InstructionCount = 0;
+
             while (PoweredOn)
             {
                 try
@@ -49,11 +51,19 @@ namespace GameboyEmulator
 
                     CPU.Instance.Step();
 
-                    Thread.Sleep(1000);
+                    InstructionCount++;
+                    BlarggUpdate();
+                    if (InstructionCount % 1000 == 0)
+                    {
+                        BlarggDisplay();
+                    }
+
+
+                    Thread.Sleep(100);
                 }
                 catch ( Exception e)
                 {
-                    PoweredOn = false;
+                    //PoweredOn = false;
                     Logger.WriteLine("Exception - " + e.Message, Logger.LogLevel.Error);
                 }
             }
@@ -61,6 +71,36 @@ namespace GameboyEmulator
 
         #endregion
 
+
+        #region BLARGG Tests
+        private int InstructionCount = 0;
+
+        private string BlarggMessage = string.Empty;
+
+        public void BlarggUpdate()
+        {
+            if (Bus.Read(0xFF02) == 0x81)
+            {
+                //MessageBox.Show("DBG_Update()");
+                Byte val = Bus.Read(0xFF01);
+
+                char c = (char)val;
+                BlarggMessage = BlarggMessage + c.ToString();
+                Bus.Write(0xFF02, 0);
+
+            }
+        }
+
+        public void BlarggDisplay()
+        {
+            if (BlarggMessage != string.Empty)
+            {
+                Logger.WriteLine("Blarrg - " + BlarggMessage, Logger.LogLevel.Information);
+            }
+        }
+
+
+        #endregion
 
         #region Button Presses
         public void GameboyForm_ButtonPressed(object sender, ButtonPressedEventArgs e)

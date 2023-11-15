@@ -117,5 +117,20 @@ namespace GameboyEmulator
                 Logger.WriteLine("Cartridge Insert Status - " + sb.ToString(), Logger.LogLevel.Information);
             }
         }
+
+        private void errorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger.Level = Logger.LogLevel.Error;
+        }
+
+        private void infoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger.Level = Logger.LogLevel.Information;
+        }
+
+        private void debugToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Logger.Level = Logger.LogLevel.Debug;
+        }
     }
 }

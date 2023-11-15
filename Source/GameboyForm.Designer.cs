@@ -30,6 +30,7 @@
         {
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
+            insertROMToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -49,7 +50,11 @@
             button9 = new Button();
             button10 = new Button();
             button8 = new Button();
-            insertROMToolStripMenuItem = new ToolStripMenuItem();
+            loggerToolStripMenuItem = new ToolStripMenuItem();
+            setLevelToolStripMenuItem = new ToolStripMenuItem();
+            errorToolStripMenuItem = new ToolStripMenuItem();
+            infoToolStripMenuItem = new ToolStripMenuItem();
+            debugToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -61,7 +66,7 @@
             // 
             // menuStrip1
             // 
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, loggerToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(578, 24);
@@ -74,6 +79,13 @@
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "File";
+            // 
+            // insertROMToolStripMenuItem
+            // 
+            insertROMToolStripMenuItem.Name = "insertROMToolStripMenuItem";
+            insertROMToolStripMenuItem.Size = new Size(180, 22);
+            insertROMToolStripMenuItem.Text = "Insert ROM...";
+            insertROMToolStripMenuItem.Click += insertROMToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -362,12 +374,40 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
-            // insertROMToolStripMenuItem
+            // loggerToolStripMenuItem
             // 
-            insertROMToolStripMenuItem.Name = "insertROMToolStripMenuItem";
-            insertROMToolStripMenuItem.Size = new Size(180, 22);
-            insertROMToolStripMenuItem.Text = "Insert ROM...";
-            insertROMToolStripMenuItem.Click += insertROMToolStripMenuItem_Click;
+            loggerToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { setLevelToolStripMenuItem });
+            loggerToolStripMenuItem.Name = "loggerToolStripMenuItem";
+            loggerToolStripMenuItem.Size = new Size(56, 20);
+            loggerToolStripMenuItem.Text = "Logger";
+            // 
+            // setLevelToolStripMenuItem
+            // 
+            setLevelToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { errorToolStripMenuItem, infoToolStripMenuItem, debugToolStripMenuItem });
+            setLevelToolStripMenuItem.Name = "setLevelToolStripMenuItem";
+            setLevelToolStripMenuItem.Size = new Size(180, 22);
+            setLevelToolStripMenuItem.Text = "Set Level";
+            // 
+            // errorToolStripMenuItem
+            // 
+            errorToolStripMenuItem.Name = "errorToolStripMenuItem";
+            errorToolStripMenuItem.Size = new Size(180, 22);
+            errorToolStripMenuItem.Text = "Error";
+            errorToolStripMenuItem.Click += errorToolStripMenuItem_Click;
+            // 
+            // infoToolStripMenuItem
+            // 
+            infoToolStripMenuItem.Name = "infoToolStripMenuItem";
+            infoToolStripMenuItem.Size = new Size(180, 22);
+            infoToolStripMenuItem.Text = "Info";
+            infoToolStripMenuItem.Click += infoToolStripMenuItem_Click;
+            // 
+            // debugToolStripMenuItem
+            // 
+            debugToolStripMenuItem.Name = "debugToolStripMenuItem";
+            debugToolStripMenuItem.Size = new Size(180, 22);
+            debugToolStripMenuItem.Text = "Debug";
+            debugToolStripMenuItem.Click += debugToolStripMenuItem_Click;
             // 
             // GameboyForm
             // 
@@ -423,5 +463,10 @@
         private Panel panel2;
         private Panel panel3;
         private ToolStripMenuItem insertROMToolStripMenuItem;
+        private ToolStripMenuItem loggerToolStripMenuItem;
+        private ToolStripMenuItem setLevelToolStripMenuItem;
+        private ToolStripMenuItem errorToolStripMenuItem;
+        private ToolStripMenuItem infoToolStripMenuItem;
+        private ToolStripMenuItem debugToolStripMenuItem;
     }
 }
