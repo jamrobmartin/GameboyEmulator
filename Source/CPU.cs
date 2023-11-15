@@ -151,7 +151,9 @@ namespace GameboyEmulator
         public Word SP { get; set; }
         public Word PC { get; set; }
 
-        public Byte IR { get; set; }
+        public Byte InstructionRegister { get; set; }
+
+        public Instruction Instruction { get; set; }
 
 
         #endregion
@@ -163,7 +165,8 @@ namespace GameboyEmulator
             D = 0; E = 0;
             H = 0; L = 0;
             SP = 0; PC = 0;
-            IR = 0;
+            InstructionRegister = 0;
+            Instruction = new Instruction();
         }
 
 
@@ -175,6 +178,35 @@ namespace GameboyEmulator
             BC = 0x1300;
             DE = 0xD800;
             HL = 0x4D01;
+
+            InstructionRegister = 0;
+            Instruction = new Instruction();
+        }
+
+        public void Step()
+        {
+            FetchInstruction();
+
+            FetchData();
+
+            ExecuteInstruction();
+        }
+
+        public void FetchInstruction()
+        {
+            InstructionRegister = Bus.Read(PC++);
+            Instruction = new Instruction(InstructionRegister);
+
+        }
+
+        public void FetchData()
+        {
+
+        }
+
+        public void ExecuteInstruction()
+        {
+
         }
 
 

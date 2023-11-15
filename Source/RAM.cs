@@ -12,5 +12,15 @@ namespace GameboyEmulator
         private static readonly Lazy<RAM> lazy = new Lazy<RAM>(() => new RAM());
         public static RAM Instance { get; private set; } = lazy.Value;
         #endregion
+
+        public byte Read(Word address)
+        {
+            throw new Exception("RAM - Tried to read memory location: " + address.ToHexString());
+        }
+
+        public void Write(Word address, byte value)
+        {
+
+        }
     }
 }

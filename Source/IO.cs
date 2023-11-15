@@ -12,5 +12,15 @@ namespace GameboyEmulator
         private static readonly Lazy<IO> lazy = new Lazy<IO>(() => new IO());
         public static IO Instance { get; private set; } = lazy.Value;
         #endregion
+
+        public byte Read(Word address)
+        {
+            throw new Exception("IO - Tried to read memory location: " + address.ToHexString());
+        }
+
+        public void Write(Word address, byte value)
+        {
+
+        }
     }
 }

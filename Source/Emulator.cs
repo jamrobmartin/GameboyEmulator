@@ -43,9 +43,19 @@ namespace GameboyEmulator
 
             while (PoweredOn)
             {
-                Logger.WriteLine("Clock", Logger.LogLevel.Debug);
+                try
+                {
+                    Logger.WriteLine("CPU Step", Logger.LogLevel.Debug);
 
-                Thread.Sleep(1000);
+                    CPU.Instance.Step();
+
+                    Thread.Sleep(1000);
+                }
+                catch ( Exception e)
+                {
+                    PoweredOn = false;
+                    Logger.WriteLine("Exception - " + e.Message, Logger.LogLevel.Error);
+                }
             }
         }
 
