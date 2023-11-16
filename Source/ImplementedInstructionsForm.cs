@@ -74,6 +74,8 @@ namespace GameboyEmulator
                 case eInstructionType.None: color = Color.Red; break;
 
                 case eInstructionType.LD: color = Color.FromArgb(255,199,181,235); break;
+
+                case eInstructionType.LDH: color = Color.FromArgb(255, 199, 181, 235); break;
             }
 
             return color;
