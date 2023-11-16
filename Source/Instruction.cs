@@ -9,17 +9,35 @@ namespace GameboyEmulator
 {
     public enum eInstructionType
     {
-        None
+        None,
+        LD
     }
 
     public enum eAddressingMode
     {
-        None
+        None,
+        Register_Register,
+        Register_MemoryRegister,
+        MemoryRegister_Register
     }
 
     public enum eRegisterType
     {
-        None
+        None,
+        A,
+        F,
+        B,
+        C,
+        D,
+        E,
+        H,
+        L,
+        AF,
+        BC,
+        DE,
+        HL,
+        SP,
+        PC
     }
 
     public enum eConditionType
@@ -117,73 +135,73 @@ namespace GameboyEmulator
                 case 0x3E: SetUpInstruction(eInstructionType.None); break;
                 case 0x3F: SetUpInstruction(eInstructionType.None); break;
 
-                case 0x40: SetUpInstruction(eInstructionType.None); break;
-                case 0x41: SetUpInstruction(eInstructionType.None); break;
-                case 0x42: SetUpInstruction(eInstructionType.None); break;
-                case 0x43: SetUpInstruction(eInstructionType.None); break;
-                case 0x44: SetUpInstruction(eInstructionType.None); break;
-                case 0x45: SetUpInstruction(eInstructionType.None); break;
-                case 0x46: SetUpInstruction(eInstructionType.None); break;
-                case 0x47: SetUpInstruction(eInstructionType.None); break;
-                case 0x48: SetUpInstruction(eInstructionType.None); break;
-                case 0x49: SetUpInstruction(eInstructionType.None); break;
-                case 0x4A: SetUpInstruction(eInstructionType.None); break;
-                case 0x4B: SetUpInstruction(eInstructionType.None); break;
-                case 0x4C: SetUpInstruction(eInstructionType.None); break;
-                case 0x4D: SetUpInstruction(eInstructionType.None); break;
-                case 0x4E: SetUpInstruction(eInstructionType.None); break;
-                case 0x4F: SetUpInstruction(eInstructionType.None); break;
+                case 0x40: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.B); break;
+                case 0x41: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.C); break;
+                case 0x42: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.D); break;
+                case 0x43: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.E); break;
+                case 0x44: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.H); break;
+                case 0x45: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.L); break;
+                case 0x46: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.B, eRegisterType.HL); break;
+                case 0x47: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.B, eRegisterType.A); break;
+                case 0x48: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.B); break;
+                case 0x49: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.C); break;
+                case 0x4A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.D); break;
+                case 0x4B: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.E); break;
+                case 0x4C: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.H); break;
+                case 0x4D: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.L); break;
+                case 0x4E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.C, eRegisterType.HL); break;
+                case 0x4F: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.C, eRegisterType.A); break;
 
-                case 0x50: SetUpInstruction(eInstructionType.None); break;
-                case 0x51: SetUpInstruction(eInstructionType.None); break;
-                case 0x52: SetUpInstruction(eInstructionType.None); break;
-                case 0x53: SetUpInstruction(eInstructionType.None); break;
-                case 0x54: SetUpInstruction(eInstructionType.None); break;
-                case 0x55: SetUpInstruction(eInstructionType.None); break;
-                case 0x56: SetUpInstruction(eInstructionType.None); break;
-                case 0x57: SetUpInstruction(eInstructionType.None); break;
-                case 0x58: SetUpInstruction(eInstructionType.None); break;
-                case 0x59: SetUpInstruction(eInstructionType.None); break;
-                case 0x5A: SetUpInstruction(eInstructionType.None); break;
-                case 0x5B: SetUpInstruction(eInstructionType.None); break;
-                case 0x5C: SetUpInstruction(eInstructionType.None); break;
-                case 0x5D: SetUpInstruction(eInstructionType.None); break;
-                case 0x5E: SetUpInstruction(eInstructionType.None); break;
-                case 0x5F: SetUpInstruction(eInstructionType.None); break;
+                case 0x50: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.B); break;
+                case 0x51: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.C); break;
+                case 0x52: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.D); break;
+                case 0x53: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.E); break;
+                case 0x54: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.H); break;
+                case 0x55: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.L); break;
+                case 0x56: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.D, eRegisterType.HL); break;
+                case 0x57: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.D, eRegisterType.A); break;
+                case 0x58: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.B); break;
+                case 0x59: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.C); break;
+                case 0x5A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.D); break;
+                case 0x5B: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.E); break;
+                case 0x5C: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.H); break;
+                case 0x5D: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.L); break;
+                case 0x5E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.E, eRegisterType.HL); break;
+                case 0x5F: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.E, eRegisterType.A); break;
 
-                case 0x60: SetUpInstruction(eInstructionType.None); break;
-                case 0x61: SetUpInstruction(eInstructionType.None); break;
-                case 0x62: SetUpInstruction(eInstructionType.None); break;
-                case 0x63: SetUpInstruction(eInstructionType.None); break;
-                case 0x64: SetUpInstruction(eInstructionType.None); break;
-                case 0x65: SetUpInstruction(eInstructionType.None); break;
-                case 0x66: SetUpInstruction(eInstructionType.None); break;
-                case 0x67: SetUpInstruction(eInstructionType.None); break;
-                case 0x68: SetUpInstruction(eInstructionType.None); break;
-                case 0x69: SetUpInstruction(eInstructionType.None); break;
-                case 0x6A: SetUpInstruction(eInstructionType.None); break;
-                case 0x6B: SetUpInstruction(eInstructionType.None); break;
-                case 0x6C: SetUpInstruction(eInstructionType.None); break;
-                case 0x6D: SetUpInstruction(eInstructionType.None); break;
-                case 0x6E: SetUpInstruction(eInstructionType.None); break;
-                case 0x6F: SetUpInstruction(eInstructionType.None); break;
+                case 0x60: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.B); break;
+                case 0x61: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.C); break;
+                case 0x62: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.D); break;
+                case 0x63: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.E); break;
+                case 0x64: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.H); break;
+                case 0x65: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.L); break;
+                case 0x66: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.H, eRegisterType.HL); break;
+                case 0x67: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.H, eRegisterType.A); break;
+                case 0x68: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.B); break;
+                case 0x69: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.C); break;
+                case 0x6A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.D); break;
+                case 0x6B: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.E); break;
+                case 0x6C: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.H); break;
+                case 0x6D: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.L); break;
+                case 0x6E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.L, eRegisterType.HL); break;
+                case 0x6F: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.L, eRegisterType.A); break;
 
-                case 0x70: SetUpInstruction(eInstructionType.None); break;
-                case 0x71: SetUpInstruction(eInstructionType.None); break;
-                case 0x72: SetUpInstruction(eInstructionType.None); break;
-                case 0x73: SetUpInstruction(eInstructionType.None); break;
-                case 0x74: SetUpInstruction(eInstructionType.None); break;
-                case 0x75: SetUpInstruction(eInstructionType.None); break;
-                case 0x76: SetUpInstruction(eInstructionType.None); break;
-                case 0x77: SetUpInstruction(eInstructionType.None); break;
-                case 0x78: SetUpInstruction(eInstructionType.None); break;
-                case 0x79: SetUpInstruction(eInstructionType.None); break;
-                case 0x7A: SetUpInstruction(eInstructionType.None); break;
-                case 0x7B: SetUpInstruction(eInstructionType.None); break;
-                case 0x7C: SetUpInstruction(eInstructionType.None); break;
-                case 0x7D: SetUpInstruction(eInstructionType.None); break;
-                case 0x7E: SetUpInstruction(eInstructionType.None); break;
-                case 0x7F: SetUpInstruction(eInstructionType.None); break;
+                case 0x70: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.B); break;
+                case 0x71: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.C); break;
+                case 0x72: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.D); break;
+                case 0x73: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.E); break;
+                case 0x74: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.H); break;
+                case 0x75: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.L); break;
+                case 0x76: SetUpInstruction(eInstructionType.None); break; // HALT
+                case 0x77: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.HL, eRegisterType.A); break;
+                case 0x78: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.B); break;
+                case 0x79: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.C); break;
+                case 0x7A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.D); break;
+                case 0x7B: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.E); break;
+                case 0x7C: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.H); break;
+                case 0x7D: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.L); break;
+                case 0x7E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.A, eRegisterType.HL); break;
+                case 0x7F: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_Register, eRegisterType.A, eRegisterType.A); break;
 
                 case 0x80: SetUpInstruction(eInstructionType.None); break;
                 case 0x81: SetUpInstruction(eInstructionType.None); break;
@@ -374,6 +392,26 @@ namespace GameboyEmulator
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(InstructionType);
+
+            switch (AddressingMode)
+            {
+                case eAddressingMode.None:
+                    break;
+                case eAddressingMode.Register_Register:
+                    sb.Append(' ');
+                    sb.Append(Register1.ToString() + "," + Register2.ToString());
+                    break;
+                case eAddressingMode.Register_MemoryRegister:
+                    sb.Append(' ');
+                    sb.Append(Register1.ToString() + ",(" + Register2.ToString() + ")");
+                    break;
+                case eAddressingMode.MemoryRegister_Register:
+                    sb.Append(' ');
+                    sb.Append("(" + Register1.ToString() + ")," + Register2.ToString());
+                    break;
+                default:
+                    break;
+            }
 
             return sb.ToString();
         }
