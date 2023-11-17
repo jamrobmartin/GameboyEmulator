@@ -235,6 +235,29 @@ namespace GameboyEmulator
             }
             return value;
         }
+
+        public void SetFlags(Byte z, Byte n, Byte h, Byte c)
+        {
+            if (z != -1)
+            {
+                ZFlag = z;
+            }
+
+            if (n != -1)
+            {
+                NFlag = n;
+            }
+
+            if (h != -1)
+            {
+                HFlag = h;
+            }
+
+            if (c != -1)
+            {
+                CFlag = c;
+            }
+        }
         #endregion
 
         #region CPU Step
@@ -287,6 +310,16 @@ namespace GameboyEmulator
                     // Cycle
                     break;
                 case eAddressingMode.Register_A8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.Register_D16:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    Instruction.Parameter2 = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.HL_SPR:
                     Instruction.Parameter = Bus.Read(PC++);
                     // Cycle
                     break;
@@ -369,6 +402,8 @@ namespace GameboyEmulator
 
         public void ExecuteInstruction()
         {
+            Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Debug);
+
             switch (Instruction.InstructionType)
             {
                 case eInstructionType.None:
@@ -382,8 +417,6 @@ namespace GameboyEmulator
                 default:
                     break;
             }
-
-            Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Debug);
         }
 
         public void ExecuteInstructionLD()
@@ -399,6 +432,11 @@ namespace GameboyEmulator
             if (Instruction.AddressingMode == eAddressingMode.Register_D8)
             {
                 SetRegister(Instruction.Register1, Instruction.Parameter);
+            }
+            else
+            if (Instruction.AddressingMode == eAddressingMode.Register_D16)
+            {
+                SetRegister(Instruction.Register1, Instruction.Parameter | (Instruction.Parameter2 << 8));
             }
 
             // If loading to autoincrment or autodecrement
@@ -464,6 +502,18 @@ namespace GameboyEmulator
                 // We are loading to a register
                 SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
                 // Cycle
+            }
+
+            // If this is the special case 0xF8, HL_SPR
+            else
+            if(Instruction.AddressingMode == eAddressingMode.HL_SPR)
+            {
+                bool hflag = (SP & 0xF) + (Instruction.Parameter & 0xF) >= 0x10;
+
+                bool Cflag = (SP & 0xFF) + (Instruction.Parameter & 0xFF) >= 0x100;
+
+                SetFlags(0,0,hflag, Cflag);
+                SetRegister(eRegisterType.HL, GetRegister(Instruction.Register2) + (sbyte)Instruction.Parameter);
             }
 
             // Cycle

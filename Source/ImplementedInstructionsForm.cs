@@ -26,14 +26,26 @@ namespace GameboyEmulator
         private void Populatate()
         {
             tableLayoutPanel1.Controls.Clear();
+            tableLayoutPanel1.BackColor = Color.Black;
+
+            Button corner = new Button();
+            corner.Dock = DockStyle.Fill;
+            corner.FlatStyle = FlatStyle.Flat;
+            corner.FlatAppearance.BorderSize = 0;
+            corner.TabStop = false;
+            corner.BackColor = Color.Gray;
+            tableLayoutPanel1.Controls.Add(corner, 0,0);
 
             for (int i = 1; i < tableLayoutPanel1.RowCount; i++)
             {
                 Button button = new Button();
                 Byte value = ((i - 1) << 4);
                 button.Text = value.ToHexString();
-                //button.Text = HexString.Convert((byte)((i - 1) << 4));
                 button.Dock = DockStyle.Fill;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.TabStop = false;
+                button.BackColor = Color.Gray;
                 tableLayoutPanel1.Controls.Add(button, 0, i);
             }
 
@@ -43,6 +55,10 @@ namespace GameboyEmulator
                 Byte value = (i - 1);
                 button.Text = value.ToHexString();
                 button.Dock = DockStyle.Fill;
+                button.FlatStyle = FlatStyle.Flat;
+                button.FlatAppearance.BorderSize = 0;
+                button.TabStop = false;
+                button.BackColor = Color.Gray;
                 tableLayoutPanel1.Controls.Add(button, i, 0);
             }
 
@@ -57,6 +73,9 @@ namespace GameboyEmulator
                     Button button = new Button();
                     button.Text = inst.OpCode.ToHexString() + Environment.NewLine + inst.Mnemonic();
                     button.Dock = DockStyle.Fill;
+                    button.FlatStyle = FlatStyle.Flat;
+                    button.FlatAppearance.BorderSize = 0;
+                    button.TabStop = false;
                     tableLayoutPanel1.Controls.Add(button, j, i);
 
                     button.BackColor = GetColorFromInstruction(inst);
@@ -71,11 +90,25 @@ namespace GameboyEmulator
 
             switch (inst.InstructionType)
             {
-                case eInstructionType.None: color = Color.Red; break;
+                case eInstructionType.None: 
+                    color = Color.Red; 
+                    break;
 
-                case eInstructionType.LD: color = Color.FromArgb(255,199,181,235); break;
+                case eInstructionType.LD: 
+                    color = Color.FromArgb(255, 204, 204, 255);
+                    
+                    if(inst.AddressingMode == eAddressingMode.Register_D16)
+                        color = Color.FromArgb(255, 204, 255, 204);
+                    if (inst.Register1 == eRegisterType.SP)
+                        color = Color.FromArgb(255, 204, 255, 204);
+                    if (inst.Register2 == eRegisterType.SP)
+                        color = Color.FromArgb(255, 204, 255, 204);
 
-                case eInstructionType.LDH: color = Color.FromArgb(255, 199, 181, 235); break;
+                    break;
+
+                case eInstructionType.LDH: 
+                    color = Color.FromArgb(255, 204, 204, 255); 
+                    break;
             }
 
             return color;

@@ -16,6 +16,7 @@ namespace GameboyEmulator
         public static implicit operator int(Byte custom) { return custom._value; }
 
         public static implicit operator bool(Byte custom) { return custom._value > 0; }
+        public static implicit operator Byte(bool value) { return value ? new Byte(1) : new Byte(0); }
 
 
         public string ToHexString()

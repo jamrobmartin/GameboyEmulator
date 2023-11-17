@@ -43,7 +43,7 @@ namespace GameboyEmulator
 
         public static void Write(Word address, Byte value) 
         {
-            if (address >= 0x0000 && address <= 0x7FFF) { Cartridge.Instance.Write(address, value); return; }
+            if (address >= 0x0000 && address <= 0x7FFF) { }// Cartridge ROM
             if (address >= 0x8000 && address <= 0x9FFF) { RAM.Instance.Write(address, value); return; }
             if (address >= 0xA000 && address <= 0xBFFF) { Cartridge.Instance.Write(address, value); return; }
             if (address >= 0xC000 && address <= 0xDFFF) { RAM.Instance.Write(address, value); return; }
