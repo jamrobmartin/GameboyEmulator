@@ -324,6 +324,13 @@ namespace GameboyEmulator
                     // Cycle
                     break;
 
+                case eAddressingMode.D16:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    Instruction.Parameter2 = Bus.Read(PC++);
+                    // Cycle
+                    break;
+
                 default:
                     break;
             }
@@ -413,6 +420,9 @@ namespace GameboyEmulator
                     break;
                 case eInstructionType.LDH:
                     ExecuteInstructionLDH();
+                    break;
+                case eInstructionType.JP:
+                    ExecuteInstructionJP();
                     break;
                 default:
                     break;
@@ -532,6 +542,50 @@ namespace GameboyEmulator
             }
 
             // Cycle
+        }
+
+        private bool CheckCondition()
+        {
+            bool proceed = false;
+            switch (Instruction.ConditionType)
+            {
+                case eConditionType.None:
+                    proceed = true;
+                    break;
+                case eConditionType.NZ:
+                    proceed = !ZFlag;
+                    break;
+                case eConditionType.Z:
+                    proceed = ZFlag;
+                    break;
+                case eConditionType.NC:
+                    proceed = !CFlag;
+                    break;
+                case eConditionType.C:
+                    proceed = CFlag;
+                    break;
+                default:
+                    break;
+            }
+
+            return proceed;
+        }
+
+        public void ExecuteInstructionJP()
+        {
+            if(CheckCondition())
+            {
+                if(Instruction.Register1 == eRegisterType.HL)
+                {
+                    SetRegister(eRegisterType.PC, GetRegister(eRegisterType.HL));
+                }
+                else
+                {
+                    SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
+                }
+                
+                // Cycle
+            }
         }
         #endregion
 
