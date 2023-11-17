@@ -65,6 +65,12 @@ namespace GameboyEmulator
         public eRegisterType Register2 = eRegisterType.None;
         public eConditionType ConditionType = eConditionType.None;
         public Byte Parameter = 0;
+        public Byte Parameter2 = 0;
+
+        public bool DestinationIsMemory { get; set; } = false;
+        public Word DestinationAddress { get; set; } = 0;
+        public bool SourceIsMemory {  get; set; } = false;
+        public Word SourceAddress { get; set; } = 0;
 
         public Instruction() { }
 
@@ -490,7 +496,10 @@ namespace GameboyEmulator
             sb.Append(" - ");
 
             sb.Append(Parameter.ToString());
-            
+            sb.Append(" - ");
+
+            sb.Append(Parameter2.ToString());
+
             return sb.ToString();
         }
 

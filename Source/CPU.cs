@@ -187,11 +187,64 @@ namespace GameboyEmulator
             Instruction = new Instruction();
         }
 
+        #region CPU Helpers
+        public void SetRegister(eRegisterType register, Word value)
+        {
+            switch (register)
+            {
+                case eRegisterType.A: A = value & 0xFF; break;
+                case eRegisterType.F: F = value & 0xFF; break;
+                case eRegisterType.B: B = value & 0xFF; break;
+                case eRegisterType.C: C = value & 0xFF; break;
+                case eRegisterType.D: D = value & 0xFF; break;
+                case eRegisterType.E: E = value & 0xFF; break;
+                case eRegisterType.H: H = value & 0xFF; break;
+                case eRegisterType.L: L = value & 0xFF; break;
+                case eRegisterType.AF: AF = value; break;
+                case eRegisterType.BC: BC = value; break;
+                case eRegisterType.DE: DE = value; break;
+                case eRegisterType.HL: HL = value; break;
+                case eRegisterType.SP: SP = value; break;
+                case eRegisterType.PC: PC = value; break;
+                default:
+                    break;
+            }
+        }
+
+        public Word GetRegister(eRegisterType register)
+        {
+            Word value = 0;
+            switch (register)
+            {
+                case eRegisterType.A:  value = A; break;
+                case eRegisterType.F:  value = F; break;
+                case eRegisterType.B:  value = B; break;
+                case eRegisterType.C:  value = C; break;
+                case eRegisterType.D:  value = D; break;
+                case eRegisterType.E:  value = E; break;
+                case eRegisterType.H:  value = H; break;
+                case eRegisterType.L:  value = L; break;
+                case eRegisterType.AF: value = AF; break;
+                case eRegisterType.BC: value = BC; break;
+                case eRegisterType.DE: value = DE; break;
+                case eRegisterType.HL: value = HL; break;
+                case eRegisterType.SP: value = SP; break;
+                case eRegisterType.PC: value = PC; break;
+                default:
+                    break;
+            }
+            return value;
+        }
+        #endregion
+
+        #region CPU Step
         public void Step()
         {
             FetchInstruction();
 
             FetchData();
+
+            InterpretInstruction();
 
             ExecuteInstruction();
         }
@@ -206,14 +259,231 @@ namespace GameboyEmulator
 
         public void FetchData()
         {
+            switch (Instruction.AddressingMode)
+            {
+                case eAddressingMode.Register_D8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.MemoryRegister_D8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.Register_A16:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    Instruction.Parameter2 = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.A16_Register:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    Instruction.Parameter2 = Bus.Read(PC++);
+                    // Cycle
+                    break;
 
+                case eAddressingMode.A8_Register:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+                case eAddressingMode.Register_A8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+
+                default:
+                    break;
+            }
+        }
+
+        public void InterpretInstruction()
+        {
+            switch (Instruction.AddressingMode)
+            {
+                case eAddressingMode.MemoryRegister_Register:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = GetRegister(Instruction.Register1);
+
+                    if(Instruction.Register1 == eRegisterType.C)
+                    {
+                        Instruction.DestinationAddress |= 0xFF00;
+                    }
+
+                    break;
+
+                case eAddressingMode.Register_MemoryRegister:
+                    Instruction.SourceIsMemory = true;
+                    Instruction.SourceAddress = GetRegister(Instruction.Register2);
+
+                    if (Instruction.Register2 == eRegisterType.C)
+                    {
+                        Instruction.SourceAddress |= 0xFF00;
+                    }
+
+                    break;
+
+                case eAddressingMode.HLI_Register:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = GetRegister(Instruction.Register1);
+                    break;
+                case eAddressingMode.HLD_Register:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = GetRegister(Instruction.Register1);
+                    break;
+
+                case eAddressingMode.Register_HLI:
+                    Instruction.SourceIsMemory = true;
+                    Instruction.SourceAddress = GetRegister(Instruction.Register2);
+                    break;
+                case eAddressingMode.Register_HLD:
+                    Instruction.SourceIsMemory = true;
+                    Instruction.SourceAddress = GetRegister(Instruction.Register2);
+                    break;
+
+                case eAddressingMode.A8_Register:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = Instruction.Parameter | 0xFF00;
+                    break;
+
+                case eAddressingMode.Register_A8:
+                    Instruction.SourceIsMemory = true;
+                    Instruction.SourceAddress = Instruction.Parameter | 0xFF00;
+                    break;
+
+                case eAddressingMode.Register_A16:
+                    Instruction.SourceIsMemory = true;
+                    Instruction.SourceAddress = Instruction.Parameter | (Instruction.Parameter2 << 8);
+                    break;
+
+                case eAddressingMode.A16_Register:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = Instruction.Parameter | (Instruction.Parameter2 << 8);
+                    break;
+
+                case eAddressingMode.MemoryRegister_D8:
+                    Instruction.DestinationIsMemory = true;
+                    Instruction.DestinationAddress = GetRegister(Instruction.Register1);
+                    break;
+            }
         }
 
         public void ExecuteInstruction()
         {
+            switch (Instruction.InstructionType)
+            {
+                case eInstructionType.None:
+                    break;
+                case eInstructionType.LD:
+                    ExecuteInstructionLD(); 
+                    break;
+                case eInstructionType.LDH:
+                    ExecuteInstructionLDH();
+                    break;
+                default:
+                    break;
+            }
+
             Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Debug);
         }
 
+        public void ExecuteInstructionLD()
+        {
+            // If loading from one register to another
+            if (Instruction.AddressingMode == eAddressingMode.Register_Register)
+            {
+                SetRegister(Instruction.Register1, GetRegister(Instruction.Register2));
+            }
+
+            // If loading a register directly with a value
+            else 
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                SetRegister(Instruction.Register1, Instruction.Parameter);
+            }
+
+            // If loading to autoincrment or autodecrement
+            else 
+            if (Instruction.AddressingMode == eAddressingMode.HLI_Register)
+            {
+                Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
+                HL++;
+                // Cycle
+            }
+            else
+            if (Instruction.AddressingMode == eAddressingMode.HLD_Register)
+            {
+                Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
+                HL--;
+                // Cycle
+            }
+
+            // If loading from autoincrement or autodecrement
+            else
+            if (Instruction.AddressingMode == eAddressingMode.Register_HLI)
+            {
+                SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
+                HL++;
+                // Cycle
+            }
+            else
+            if (Instruction.AddressingMode == eAddressingMode.Register_HLD)
+            {
+                SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
+                HL--;
+                // Cycle
+            }
+
+            // If we are loading to a memory location
+            else 
+            if(Instruction.DestinationIsMemory)
+            {
+                // Figure out if our source is a register
+                if(Instruction.Register2 != eRegisterType.None)
+                {
+                    // Check if the register is one or two bytes
+                    if(Instruction.Register2 >= eRegisterType.AF)
+                    {
+                        Bus.Write16(Instruction.DestinationAddress, GetRegister(Instruction.Register2));
+                        // Cycle
+                    }
+                    else
+                    {
+                        Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
+                    }
+                }
+
+                // If not a register, is must be a value
+                Bus.Write(Instruction.DestinationAddress, Instruction.Parameter);
+
+            }
+
+            // If we are loading from a memory location
+            else 
+            if(Instruction.SourceIsMemory)
+            {
+                // We are loading to a register
+                SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
+                // Cycle
+            }
+
+            // Cycle
+        }
+
+        public void ExecuteInstructionLDH()
+        {
+            // Only 0xE0 and 0xF0
+            if(Instruction.Register1 == eRegisterType.A)
+            {
+                SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
+            }
+            else
+            {
+                Bus.Write(Instruction.DestinationAddress, A);
+            }
+
+            // Cycle
+        }
+        #endregion
 
     }
 }

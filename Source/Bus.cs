@@ -57,6 +57,12 @@ namespace GameboyEmulator
             throw new Exception("BUS - Tried to Write memory location: " + address.ToHexString());
         }
 
+        public static void Write16(Word address, Word value)
+        {
+            Bus.Write(address, value & 0xFF);
+            Bus.Write(address + 1, (value >> 8) & 0xFF);
+        }
+
         #endregion
     }
 }

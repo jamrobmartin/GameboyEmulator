@@ -32,7 +32,6 @@ namespace GameboyEmulator
         public void StopThread()
         {
             Logger.WriteLine("Stopping Emulator ThreadLoop.", Logger.LogLevel.Information);
-            Thread?.Join();
             Logger.WriteLine("Emulator ThreadLoop Stopped.", Logger.LogLevel.Information);
         }
 
@@ -59,11 +58,11 @@ namespace GameboyEmulator
                     }
 
 
-                    Thread.Sleep(100);
+                    //Thread.Sleep(10);
                 }
                 catch ( Exception e)
                 {
-                    //PoweredOn = false;
+                    PoweredOn = false;
                     Logger.WriteLine("Exception - " + e.Message, Logger.LogLevel.Error);
                 }
             }
@@ -81,13 +80,18 @@ namespace GameboyEmulator
         {
             if (Bus.Read(0xFF02) == 0x81)
             {
-                //MessageBox.Show("DBG_Update()");
+                
                 Byte val = Bus.Read(0xFF01);
+                //MessageBox.Show("DBG_Update() - " + val.ToHexString());
 
-                char c = (char)val;
-                BlarggMessage = BlarggMessage + c.ToString();
+                if (val != 0)
+                {
+                    char c = (char)val;
+                    BlarggMessage = BlarggMessage + c.ToString();
+                    
+                }
+
                 Bus.Write(0xFF02, 0);
-
             }
         }
 
@@ -95,7 +99,7 @@ namespace GameboyEmulator
         {
             if (BlarggMessage != string.Empty)
             {
-                Logger.WriteLine("Blarrg - " + BlarggMessage, Logger.LogLevel.Information);
+                Logger.WriteLine("Blarrg - \"" + BlarggMessage + "\"", Logger.LogLevel.Information);
             }
         }
 

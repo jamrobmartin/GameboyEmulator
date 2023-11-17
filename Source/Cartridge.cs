@@ -16,8 +16,23 @@ namespace GameboyEmulator
         public String FilePath { get; set; } = string.Empty;
 
         public Byte[] Data = new Byte[1024];
+        public Byte[] ROM = new Byte[0x8000];
+        public Byte[] RAM = new Byte[0x2000];
 
         public bool Inserted { get; set; } = false;
+
+        public Cartridge()
+        {
+            for (int i = 0; i < ROM.Length; i++)
+            {
+                ROM[i] = 0;
+            }
+
+            for (int i = 0; i < RAM.Length; i++)
+            {
+                RAM[i] = 0;
+            }
+        }
 
         public bool InsertCartridge(string fileLocation)
         {
@@ -39,6 +54,8 @@ namespace GameboyEmulator
                     Data[i] = temp[i];
                 }
 
+                MapInitialROM();
+
                 FilePath = fileLocation;
                 Inserted = true;
             }
@@ -47,24 +64,50 @@ namespace GameboyEmulator
             return Inserted;
         }
 
+        public void MapInitialROM()
+        {
+            // Write up to the first 0x8000 bytes to ROM
+            int size = 0x8000;
+            if(Data.Length < size)
+            {
+                size = Data.Length;
+            }
+
+            for (int i = 0; i < size; i++)
+            {
+                ROM[i] = Data[i];
+            }
+        }
+
 
         public Byte Read(Word address)
         {
             if (Inserted)
             {
-                return Data[address];
+                if (address >= 0x0000 && address <= 0x7FFF) { return ROM[address]; }
+                if (address >= 0xA000 && address <= 0xBFFF) { return RAM[address - 0xA000]; }
+
+                throw new Exception("Cartridge - Tried to Read memory location: " + address.ToHexString());
             }
             else
             {
                 throw new Exception("Cartridge - Cartridge not Inserted");
             }
 
-            
         }
 
         public void Write(Word address, Byte value)
         {
-            throw new Exception("Cartridge - Tried to Write memory location: " + address.ToHexString());
+            if (Inserted)
+            {
+                if (address >= 0xA000 && address <= 0xBFFF) { RAM[address - 0xA000] = value; return; }
+
+                throw new Exception("Cartridge - Tried to Write memory location: " + address.ToHexString());
+            }
+            else
+            {
+                throw new Exception("Cartridge - Cartridge not Inserted");
+            }
         }
     }
 }

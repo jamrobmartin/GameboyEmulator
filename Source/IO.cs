@@ -20,7 +20,8 @@ namespace GameboyEmulator
             if (address >= 0xFF01 && address <= 0xFF01) { return serialData[0]; }
             if (address >= 0xFF02 && address <= 0xFF02) { return serialData[1]; }
 
-            throw new Exception("IO - Tried to read memory location: " + address.ToHexString());
+            //throw new Exception("IO - Tried to read memory location: " + address.ToHexString());
+            return 0x00;
         }
 
         public void Write(Word address, Byte value)
@@ -28,7 +29,7 @@ namespace GameboyEmulator
             if (address >= 0xFF01 && address <= 0xFF01) { serialData[0] = value; return; }
             if (address >= 0xFF02 && address <= 0xFF02) { serialData[1] = value; return; }
 
-            throw new Exception("IO - Tried to Write memory location: " + address.ToHexString());
+            //throw new Exception("IO - Tried to Write memory location: " + address.ToHexString());
         }
     }
 }
