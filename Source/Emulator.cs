@@ -64,6 +64,8 @@ namespace GameboyEmulator
                 {
                     PoweredOn = false;
                     Logger.WriteLine("Exception - " + e.Message, Logger.LogLevel.Error);
+                    Logger.WriteLine("PC:" + CPU.Instance.InstructionAddress.ToHexString() + " " + CPU.Instance.Instruction.ToString(), Logger.LogLevel.Error);
+                    CPU.Instance.PrintState(Logger.LogLevel.Error);
                 }
             }
         }

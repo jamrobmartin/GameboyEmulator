@@ -175,7 +175,7 @@ namespace GameboyEmulator
 
         public void Init()
         {
-            PC = 0x0000;
+            PC = 0x0100;
             SP = 0xFFFE;
             AF = 0xB001;
             BC = 0x1300;
@@ -185,6 +185,32 @@ namespace GameboyEmulator
             InstructionRegister = 0;
             InstructionAddress = 0;
             Instruction = new Instruction();
+        }
+
+        public void PrintState(Logger.LogLevel level = Logger.LogLevel.Debug)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append("AF:" + AF.ToHexString());
+            sb.Append(' ');
+
+            sb.Append("BC:" + BC.ToHexString());
+            sb.Append(' ');
+
+            sb.Append("DE:" + DE.ToHexString());
+            sb.Append(' ');
+
+            sb.Append("HL:" + HL.ToHexString());
+            sb.Append(' ');
+
+            sb.Append("SP:" + SP.ToHexString());
+            sb.Append(' ');
+
+            sb.Append("PC:" + PC.ToHexString());
+            sb.Append(' ');
+
+            Logger.WriteLine("[Status] " + sb.ToString(), level);
+
+
         }
 
         #region CPU Helpers
@@ -460,9 +486,14 @@ namespace GameboyEmulator
                 case eInstructionType.CALL:
                     ExecuteInstructionCALL();
                     break;
+                case eInstructionType.RET:
+                    ExecuteInstructionRET();
+                    break;
                 default:
                     break;
             }
+
+            PrintState();
         }
 
         public void ExecuteInstructionLD()
@@ -640,8 +671,24 @@ namespace GameboyEmulator
             if (CheckCondition())
             {
                 Push16(PC);
+                // Cycle
+                // Cycle
 
                 SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
+
+                // Cycle
+            }
+        }
+
+        public void ExecuteInstructionRET()
+        {
+            if (CheckCondition())
+            {
+                Word value = Pop16();
+                // Cycle
+                // Cycle
+
+                SetRegister(eRegisterType.PC, value);
 
                 // Cycle
             }
