@@ -91,7 +91,7 @@ namespace GameboyEmulator
             switch (inst.InstructionType)
             {
                 case eInstructionType.None: 
-                    color = Color.Red; 
+                    color = Color.FromArgb(255, 191, 191, 191); 
                     break;
 
                 case eInstructionType.LD: 
@@ -142,6 +142,10 @@ namespace GameboyEmulator
                 case eInstructionType.OR:
                 case eInstructionType.CP:
                     color = Color.FromArgb(255, 255, 255, 153);
+                    break;
+
+                case eInstructionType.CB:
+                    color = Color.FromArgb(255, 255, 153, 204);
                     break;
             }
 

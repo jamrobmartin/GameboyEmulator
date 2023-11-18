@@ -262,6 +262,48 @@ namespace GameboyEmulator
             return value;
         }
 
+        public void SetRegister8(eRegisterType register, Byte value)
+        {
+            switch (register)
+            {
+                case eRegisterType.A: A = value; break;
+                case eRegisterType.F: F = value; break;
+                case eRegisterType.B: B = value; break;
+                case eRegisterType.C: C = value; break;
+                case eRegisterType.D: D = value; break;
+                case eRegisterType.E: E = value; break;
+                case eRegisterType.H: H = value; break;
+                case eRegisterType.L: L = value; break;
+
+                case eRegisterType.HL: Bus.Write(GetRegister(eRegisterType.HL), value); break;
+
+                default:
+                    break;
+            }
+        }
+
+        public Byte GetRegister8(eRegisterType register)
+        {
+            Byte value = 0;
+            switch (register)
+            {
+                case eRegisterType.A: value = A; break;
+                case eRegisterType.F: value = F; break;
+                case eRegisterType.B: value = B; break;
+                case eRegisterType.C: value = C; break;
+                case eRegisterType.D: value = D; break;
+                case eRegisterType.E: value = E; break;
+                case eRegisterType.H: value = H; break;
+                case eRegisterType.L: value = L; break;
+
+                case eRegisterType.HL: value = Bus.Read(GetRegister(eRegisterType.HL)); break;
+
+                default:
+                    break;
+            }
+            return value;
+        }
+
         public void SetFlags(Byte z, Byte n, Byte h, Byte c)
         {
             if (z != -1)
@@ -516,6 +558,9 @@ namespace GameboyEmulator
                     break;
                 case eInstructionType.CP:
                     ExecuteInstructionCP();
+                    break;
+                case eInstructionType.CB:
+                    ExecuteInstructionCB();
                     break;
                 default:
                     break;
@@ -859,6 +904,164 @@ namespace GameboyEmulator
 
                 SetFlags(result == 0, 1, hFlag, CFlag);
             }
+        }
+
+        public eRegisterType DecodeReg(Byte reg)
+        {
+            if (reg == 0) return eRegisterType.B;
+            if (reg == 1) return eRegisterType.C;
+            if (reg == 2) return eRegisterType.D;
+            if (reg == 3) return eRegisterType.E;
+            if (reg == 4) return eRegisterType.H;
+            if (reg == 5) return eRegisterType.L;
+            if (reg == 6) return eRegisterType.HL;
+            if (reg == 7) return eRegisterType.A;
+
+            return eRegisterType.None;
+        }
+
+        public void ExecuteInstructionCB()
+        {
+            // CB Instructions perform BIT operations on register values.
+            Byte op = Instruction.Parameter;
+
+            eRegisterType reg = DecodeReg(op & 0b111);
+            Byte bit = (op >> 3) & 0b111;
+            Byte bitOp = (op >> 6) & 0b11;
+
+            Byte regVal = GetRegister8(reg);
+
+            // Always do one cycle
+            // Cycle
+
+            // If you had to read HL from Memory, do two cycles
+            if(reg == eRegisterType.HL)
+            {
+                // Cycle
+                // Cycle
+            }
+
+            // Now execute the command
+            switch (bitOp)
+            {
+                case 1:
+                    // BIT
+                    SetFlags((regVal & (1 << bit)) == 0, 0, 1, -1);
+                    return;
+
+                case 2:
+                    // RST
+                    regVal = regVal & ~(1 << bit);
+                    SetRegister8(reg, regVal);
+                    return;
+
+                case 3:
+                    // SET
+                    regVal = regVal | (1 << bit);
+                    SetRegister8(reg, regVal);
+                    return;
+            }
+
+            Byte cFlag = CFlag;
+
+            switch (bit)
+            {
+                case 0:
+                    {
+                        // RLC
+                        Byte old = regVal;
+                        regVal <<= 1;
+                        regVal |= (old & 0x80) >> 7;
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
+                    }
+                    return;
+
+                case 1:
+                    {
+                        // RRC
+                        Byte old = regVal;
+                        regVal >>= 1;
+                        regVal |= (old << 7);
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, old & 1);
+                    }
+                    return;
+
+                case 2:
+                    {
+                        // RL
+                        Byte old = regVal;
+                        regVal <<= 1;
+                        regVal |= cFlag;
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
+                    }
+                    return;
+
+                case 3:
+                    {
+                        // RR
+                        Byte old = regVal;
+                        regVal >>= 1;
+                        regVal |= (cFlag << 7);
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, old & 1);
+                    }
+                    return;
+
+                case 4:
+                    {
+                        // SLA
+                        Byte old = regVal;
+                        regVal <<= 1;
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
+                    }
+                    return;
+
+                case 5:
+                    {
+                        // SRA
+                        Byte old = regVal;
+                        regVal  = (sbyte)regVal >> 1;
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, old & 1);
+                    }
+                    return;
+
+                case 6:
+                    {
+                        // SWAP
+                        regVal = ((regVal & 0xF0) >> 4) | ((regVal & 0xF) << 4);
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, 0);
+                    }
+                    return;
+
+                case 7:
+                    {
+                        // SRL
+                        Byte old = regVal;
+                        regVal = regVal >> 1;
+
+                        SetRegister(reg, regVal);
+                        SetFlags(!regVal, 0, 0, old & 1);
+                    }
+                    return;
+
+
+
+
+            }
+
         }
         #endregion
 

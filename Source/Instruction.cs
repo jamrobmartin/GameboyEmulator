@@ -25,7 +25,8 @@ namespace GameboyEmulator
         AND,
         XOR,
         OR,
-        CP
+        CP,
+        CB
     }
 
     public enum eAddressingMode
@@ -353,7 +354,7 @@ namespace GameboyEmulator
                 case 0xC8: SetUpInstruction(eInstructionType.RET, eAddressingMode.Implied, eRegisterType.None, eRegisterType.None, eConditionType.Z); break;
                 case 0xC9: SetUpInstruction(eInstructionType.RET, eAddressingMode.Implied); break;
                 case 0xCA: SetUpInstruction(eInstructionType.JP, eAddressingMode.D16, eRegisterType.None, eRegisterType.None, eConditionType.Z); break;
-                case 0xCB: SetUpInstruction(eInstructionType.None); break;
+                case 0xCB: SetUpInstruction(eInstructionType.CB, eAddressingMode.D8); break;
                 case 0xCC: SetUpInstruction(eInstructionType.CALL, eAddressingMode.D16, eRegisterType.None, eRegisterType.None, eConditionType.Z); break;
                 case 0xCD: SetUpInstruction(eInstructionType.CALL, eAddressingMode.D16); break;
                 case 0xCE: SetUpInstruction(eInstructionType.ADC, eAddressingMode.Register_D8, eRegisterType.A); break;
@@ -463,6 +464,13 @@ namespace GameboyEmulator
         {
             StringBuilder sb = new StringBuilder();
             sb.Append(InstructionType);
+
+            // If the instruction is any of the Command instruction, just display the command name
+            switch(InstructionType)
+            {
+                case eInstructionType.CB:
+                    return sb.ToString();
+            }
 
             switch (AddressingMode)
             {
