@@ -116,6 +116,17 @@ namespace GameboyEmulator
                 case eInstructionType.RET:
                     color = Color.FromArgb(255, 255, 204, 153);
                     break;
+
+                case eInstructionType.ADD:
+                case eInstructionType.ADC:
+                case eInstructionType.SUB:
+                case eInstructionType.SBC:
+                case eInstructionType.AND:
+                case eInstructionType.XOR:
+                case eInstructionType.OR:
+                case eInstructionType.CP:
+                    color = Color.FromArgb(255, 255, 255, 153);
+                    break;
             }
 
             return color;

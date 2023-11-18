@@ -109,6 +109,11 @@ namespace GameboyEmulator
             return (dynamic)a._value | b._value;
         }
 
+        public static TCustom operator ^(CustomValueType<TCustom, TValue> a, CustomValueType<TCustom, TValue> b)
+        {
+            return (dynamic)a._value ^ b._value;
+        }
+
         protected bool Equals(CustomValueType<TCustom, TValue> other)
         {
             return EqualityComparer<TValue>.Default.Equals(_value, other._value);

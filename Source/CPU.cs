@@ -489,6 +489,30 @@ namespace GameboyEmulator
                 case eInstructionType.RET:
                     ExecuteInstructionRET();
                     break;
+                case eInstructionType.ADD:
+                    ExecuteInstructionADD();
+                    break;
+                case eInstructionType.ADC:
+                    ExecuteInstructionADC();
+                    break;
+                case eInstructionType.SUB:
+                    ExecuteInstructionSUB();
+                    break;
+                case eInstructionType.SBC:
+                    ExecuteInstructionSBC();
+                    break;
+                case eInstructionType.AND:
+                    ExecuteInstructionAND();
+                    break;
+                case eInstructionType.XOR:
+                    ExecuteInstructionXOR();
+                    break;
+                case eInstructionType.OR:
+                    ExecuteInstructionOR();
+                    break;
+                case eInstructionType.CP:
+                    ExecuteInstructionCP();
+                    break;
                 default:
                     break;
             }
@@ -691,6 +715,131 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.PC, value);
 
                 // Cycle
+            }
+        }
+
+        public void ExecuteInstructionADD()
+        {
+            if(Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Word result = A + param;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (A & 0xF) + (param & 0xF) >= 0x10;
+                bool cFlag = (A & 0xFF) + (param & 0xFF) >= 0x100;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+            }
+        }
+
+        public void ExecuteInstructionADC()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+                Byte c = CFlag;
+
+                Word result = (a + param + c) & 0xFF;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) + (param & 0xF) + c >= 0x10;
+                bool cFlag = (a & 0xFF) + (param & 0xFF) + c >= 0x100;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+            }
+        }
+
+        public void ExecuteInstructionSUB()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+                Word result = a - param;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool cFlag = (a & 0xFF) - (param & 0xFF) < 0;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 1, hFlag, cFlag);
+            }
+        }
+
+        public void ExecuteInstructionSBC()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+                Byte c = CFlag;
+
+                Word result = (a - param - c) & 0xFF;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) - (param & 0xF) - c < 0;
+                bool cFlag = (a & 0xFF) - (param & 0xFF) - c < 0;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+            }
+        }
+
+        public void ExecuteInstructionAND()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+
+                Byte result = a & param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 1, 0);
+            }
+        }
+
+        public void ExecuteInstructionXOR()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+
+                Byte result = a ^ param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 0, 0);
+            }
+        }
+
+        public void ExecuteInstructionOR()
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+
+                Byte result = a | param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 0, 0);
+            }
+        }
+
+        public void ExecuteInstructionCP() 
+        {
+            if (Instruction.AddressingMode == eAddressingMode.Register_D8)
+            {
+                Byte param = Instruction.Parameter;
+                Byte a = A;
+
+                Byte result = a - param;
+
+                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool cFlag = result < 0;
+
+                SetFlags(result == 0, 1, hFlag, CFlag);
             }
         }
         #endregion
