@@ -513,6 +513,13 @@ namespace GameboyEmulator
         {
             Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Debug);
 
+            // If an instruction hasn't been implemented yet, alert us
+            if(Instruction.InstructionType == eInstructionType.None)
+            {
+                Logger.WriteLine("Instruction not implemented yet...", Logger.LogLevel.Error);
+                Logger.WriteLine("PC:" + InstructionAddress.ToHexString() + " " + Instruction.ToString(), Logger.LogLevel.Error);
+            }
+
             switch (Instruction.InstructionType)
             {
                 case eInstructionType.None:

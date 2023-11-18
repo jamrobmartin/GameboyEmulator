@@ -76,16 +76,16 @@ namespace GameboyEmulator
 
     public static class InstructionExtension
     {
-        public static string GetDescription(this Enum value)
+        public static string? GetDescription(this Enum value)
         {
             Type type = value.GetType();
-            string name = Enum.GetName(type, value);
+            string? name = Enum.GetName(type, value);
             if (name != null)
             {
-                FieldInfo field = type.GetField(name);
+                FieldInfo? field = type.GetField(name);
                 if (field != null)
                 {
-                    DescriptionAttribute attr =
+                    DescriptionAttribute? attr =
                            Attribute.GetCustomAttribute(field,
                              typeof(DescriptionAttribute)) as DescriptionAttribute;
                     if (attr != null)
