@@ -258,6 +258,31 @@ namespace GameboyEmulator
                 CFlag = c;
             }
         }
+
+        public void Push(Byte value)
+        {
+            SP--;
+            Bus.Write(SP, value);
+        }
+
+        public void Push16(Word value)
+        {
+            Push((value >> 8) & 0xFF);
+            Push(value & 0xFF);
+        }
+
+        public Byte Pop() 
+        {
+            return Bus.Read(SP++);
+        }
+
+        public Word Pop16()
+        {
+            Byte lo = Pop();
+            Word hi = Pop();
+
+            return (hi << 8) | lo;
+        }
         #endregion
 
         #region CPU Step
@@ -432,6 +457,9 @@ namespace GameboyEmulator
                 case eInstructionType.JR:
                     ExecuteInstructionJR();
                     break;
+                case eInstructionType.CALL:
+                    ExecuteInstructionCALL();
+                    break;
                 default:
                     break;
             }
@@ -601,6 +629,19 @@ namespace GameboyEmulator
             if (CheckCondition())
             {
                 SetRegister(eRegisterType.PC, GetRegister(eRegisterType.PC) + (sbyte)Instruction.Parameter );
+
+                // Cycle
+            }
+        }
+
+        public void ExecuteInstructionCALL()
+        {
+            // Call is the same as JP, but you push the contents of the PC to the Stack first.
+            if (CheckCondition())
+            {
+                Push16(PC);
+
+                SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
 
                 // Cycle
             }
