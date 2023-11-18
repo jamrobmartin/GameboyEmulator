@@ -118,6 +118,22 @@ namespace GameboyEmulator
                     break;
 
                 case eInstructionType.ADD:
+                    if(inst.AddressingMode == eAddressingMode.Register_R8)
+                    {
+                        color = Color.FromArgb(255, 255, 204, 204);
+                    }
+                    else
+                    if(inst.Register1 == eRegisterType.HL)
+                    {
+                        color = Color.FromArgb(255, 255, 204, 204);
+                    }
+                    else
+                    {
+                        color = Color.FromArgb(255, 255, 255, 153);
+                    }
+
+                    break;
+
                 case eInstructionType.ADC:
                 case eInstructionType.SUB:
                 case eInstructionType.SBC:

@@ -370,6 +370,10 @@ namespace GameboyEmulator
                     Instruction.Parameter2 = Bus.Read(PC++);
                     // Cycle
                     break;
+                case eAddressingMode.Register_R8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
                 case eAddressingMode.HL_SPR:
                     Instruction.Parameter = Bus.Read(PC++);
                     // Cycle
@@ -723,12 +727,26 @@ namespace GameboyEmulator
             if(Instruction.AddressingMode == eAddressingMode.Register_D8)
             {
                 Byte param = Instruction.Parameter;
-                Word result = A + param;
+                Byte a = A;
+                Word result = a + param;
                 bool zFlag = (result & 0xFF) == 0;
-                bool hFlag = (A & 0xF) + (param & 0xF) >= 0x10;
-                bool cFlag = (A & 0xFF) + (param & 0xFF) >= 0x100;
+                bool hFlag = (a & 0xF) + (param & 0xF) >= 0x10;
+                bool cFlag = (a & 0xFF) + (param & 0xFF) >= 0x100;
 
                 SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+            }
+            else
+            if (Instruction.AddressingMode == eAddressingMode.Register_R8)
+            {
+                Byte param = Instruction.Parameter;
+                Word sp = SP;
+                Word result = sp + (sbyte)param;
+                bool zFlag = false;
+                bool hFlag = (sp & 0xF) + (param & 0xF) >= 0x10;
+                bool cFlag = (sp & 0xFF) + (param & 0xFF) >= 0x100;
+
+                SetRegister(eRegisterType.SP, result);
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
         }

@@ -38,6 +38,7 @@ namespace GameboyEmulator
         MemoryRegister_Register,
         Register_D8,
         Register_A8,
+        Register_R8,
         A8_Register,
         MemoryRegister_D8,
         Register_A16,
@@ -383,7 +384,7 @@ namespace GameboyEmulator
                 case 0xE5: SetUpInstruction(eInstructionType.None); break;
                 case 0xE6: SetUpInstruction(eInstructionType.AND, eAddressingMode.Register_D8, eRegisterType.A); break;
                 case 0xE7: SetUpInstruction(eInstructionType.None); break;
-                case 0xE8: SetUpInstruction(eInstructionType.None); break;
+                case 0xE8: SetUpInstruction(eInstructionType.ADD, eAddressingMode.Register_R8, eRegisterType.SP); break;
                 case 0xE9: SetUpInstruction(eInstructionType.JP, eAddressingMode.Register, eRegisterType.HL); break;
                 case 0xEA: SetUpInstruction(eInstructionType.LD, eAddressingMode.A16_Register, eRegisterType.None, eRegisterType.A); break;
                 case 0xEB: SetUpInstruction(eInstructionType.None); break;
@@ -506,6 +507,10 @@ namespace GameboyEmulator
                 case eAddressingMode.Register_D16:
                     sb.Append(' ');
                     sb.Append(Register1.ToString() + "," + "D16");
+                    break;
+                case eAddressingMode.Register_R8:
+                    sb.Append(' ');
+                    sb.Append(Register1.ToString() + "," + "R8");
                     break;
                 case eAddressingMode.HLI_Register:
                     sb.Append(' ');
