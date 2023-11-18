@@ -331,6 +331,11 @@ namespace GameboyEmulator
                     // Cycle
                     break;
 
+                case eAddressingMode.D8:
+                    Instruction.Parameter = Bus.Read(PC++);
+                    // Cycle
+                    break;
+
                 default:
                     break;
             }
@@ -423,6 +428,9 @@ namespace GameboyEmulator
                     break;
                 case eInstructionType.JP:
                     ExecuteInstructionJP();
+                    break;
+                case eInstructionType.JR:
+                    ExecuteInstructionJR();
                     break;
                 default:
                     break;
@@ -584,6 +592,16 @@ namespace GameboyEmulator
                     SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
                 }
                 
+                // Cycle
+            }
+        }
+
+        public void ExecuteInstructionJR()
+        {
+            if (CheckCondition())
+            {
+                SetRegister(eRegisterType.PC, GetRegister(eRegisterType.PC) + (sbyte)Instruction.Parameter );
+
                 // Cycle
             }
         }

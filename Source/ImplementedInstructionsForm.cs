@@ -111,6 +111,7 @@ namespace GameboyEmulator
                     break;
 
                 case eInstructionType.JP:
+                case eInstructionType.JR:
                     color = Color.FromArgb(255, 255, 204, 153);
                     break;
             }
