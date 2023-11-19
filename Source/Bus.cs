@@ -35,7 +35,7 @@ namespace GameboyEmulator
             if (address >= 0xFEA0 && address <= 0xFEFF) { }// Not Used
             if (address >= 0xFF00 && address <= 0xFF7F) { return IO.Instance.Read(address); }
             if (address >= 0xFF80 && address <= 0xFFFE) { return RAM.Instance.Read(address); }
-            if (address >= 0xFFFF && address <= 0xFFFF) { return IO.Instance.Read(address); }
+            if (address >= 0xFFFF && address <= 0xFFFF) { return CPU.Instance.IE; }
 
             throw new Exception("BUS - Tried to read memory location: " + address.ToHexString());
 
@@ -52,7 +52,7 @@ namespace GameboyEmulator
             if (address >= 0xFEA0 && address <= 0xFEFF) { }// Not Used
             if (address >= 0xFF00 && address <= 0xFF7F) { IO.Instance.Write(address, value); return; }
             if (address >= 0xFF80 && address <= 0xFFFE) { RAM.Instance.Write(address, value); return; }
-            if (address >= 0xFFFF && address <= 0xFFFF) { IO.Instance.Write(address, value); return; }
+            if (address >= 0xFFFF && address <= 0xFFFF) { CPU.Instance.IE = value; return; }
 
             throw new Exception("BUS - Tried to Write memory location: " + address.ToHexString());
         }

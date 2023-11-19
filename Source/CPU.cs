@@ -6,6 +6,15 @@ using System.Threading.Tasks;
 
 namespace GameboyEmulator
 {
+    public enum eInterruptType
+    {
+        VBlank = 1,
+        LCD = 2,
+        Timer = 4,
+        Serial = 8,
+        Joypad = 16
+    }
+
     public class CPU
     {
         #region Singleton
@@ -161,10 +170,48 @@ namespace GameboyEmulator
         #endregion
 
         #region Interupts
-        public bool InteruptMasterEnabled { get; set; } = false;
+        public bool InterruptMasterEnabled { get; set; } = false;
         public bool EnablingIME { get; set; } = false;
 
         public bool Halted { get; set; } = false;
+
+        public Byte IE { get; set; } = 0x00;
+        public Byte IF { get; set; } = 0x00;
+
+        private void HandleInterupt(Word address)
+        {
+            Push16(PC);
+            PC = address;
+        }
+
+        private bool CheckInterrupt(Word address, eInterruptType type)
+        {
+            Byte it = (byte)type;
+
+            bool enabled = IE & it;
+            bool flagged = IF & it;
+
+            if (flagged && enabled)
+            {
+                HandleInterupt(address);
+                IF &= ~it;
+                Halted = false;
+                InterruptMasterEnabled = false;
+
+                return true;
+            }
+
+            return false;
+        }
+
+        public void HandleInterupts()
+        {
+            if (CheckInterrupt(0x40, eInterruptType.VBlank)) { }
+            else if (CheckInterrupt(0x48, eInterruptType.LCD)) { }
+            else if (CheckInterrupt(0x50, eInterruptType.Timer)) { }
+            else if (CheckInterrupt(0x58, eInterruptType.Serial)) { }
+            else if (CheckInterrupt(0x60, eInterruptType.Joypad)) { }
+        }
         #endregion
 
         public CPU()
@@ -175,9 +222,11 @@ namespace GameboyEmulator
             H = 0; L = 0;
             SP = 0; PC = 0;
 
-            InteruptMasterEnabled = false;
+            InterruptMasterEnabled = false;
             EnablingIME = false;
             Halted = false;
+            IE = 0;
+            IF = 0;
 
             InstructionRegister = 0;
             InstructionAddress = 0;
@@ -194,9 +243,11 @@ namespace GameboyEmulator
             DE = 0xD800;
             HL = 0x4D01;
 
-            InteruptMasterEnabled = false;
+            InterruptMasterEnabled = false;
             EnablingIME = false;
             Halted = false;
+            IE = 0;
+            IF = 0;
 
             InstructionRegister = 0;
             InstructionAddress = 0;
@@ -387,12 +438,15 @@ namespace GameboyEmulator
             else
             {
                 // Cycle
-
-                Halted = false;
+                if(IF)
+                {
+                    Halted = false;
+                }
+                
             }
             
 
-            if(InteruptMasterEnabled)
+            if(InterruptMasterEnabled)
             {
                 EnablingIME = false;
                 HandleInterupts();
@@ -400,13 +454,8 @@ namespace GameboyEmulator
 
             if(EnablingIME)
             {
-                InteruptMasterEnabled = true;
+                InterruptMasterEnabled = true;
             }
-        }
-
-        public void HandleInterupts()
-        {
-
         }
 
         public void FetchInstruction()
@@ -875,7 +924,7 @@ namespace GameboyEmulator
 
         public void ExecuteInstructionRETI()
         {
-            InteruptMasterEnabled = true;
+            InterruptMasterEnabled = true;
             ExecuteInstructionRET();
         }
 
@@ -1389,7 +1438,7 @@ namespace GameboyEmulator
 
         public void ExecuteInstructionDI()
         {
-            InteruptMasterEnabled = false;
+            InterruptMasterEnabled = false;
         }
 
         public void ExecuteInstructionEI()
