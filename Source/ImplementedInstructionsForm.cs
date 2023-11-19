@@ -141,7 +141,22 @@ namespace GameboyEmulator
                 case eInstructionType.XOR:
                 case eInstructionType.OR:
                 case eInstructionType.CP:
-                    color = Color.FromArgb(255, 255, 255, 153);
+                case eInstructionType.INC: 
+                case eInstructionType.DEC:
+                    if(inst.Register1 < eRegisterType.BC)
+                    {
+                        color = Color.FromArgb(255, 255, 255, 153);
+                    }
+                    else
+                    if (inst.AddressingMode == eAddressingMode.MemoryRegister)
+                    {
+                        color = Color.FromArgb(255, 255, 255, 153);
+                    }
+                    else
+                    {
+                        color = Color.FromArgb(255, 255, 204, 204);
+                    }
+                    
                     break;
 
                 case eInstructionType.CB:

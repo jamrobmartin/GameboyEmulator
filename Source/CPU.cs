@@ -370,6 +370,7 @@ namespace GameboyEmulator
             InstructionAddress = PC;
             InstructionRegister = Bus.Read(PC++);
             Instruction = new Instruction(InstructionRegister);
+            // Cycle
 
         }
 
@@ -569,6 +570,12 @@ namespace GameboyEmulator
                 case eInstructionType.CB:
                     ExecuteInstructionCB();
                     break;
+                case eInstructionType.INC:
+                    ExecuteInstructionINC();
+                    break;
+                case eInstructionType.DEC:
+                    ExecuteInstructionDEC();
+                    break;
                 default:
                     break;
             }
@@ -673,7 +680,6 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.HL, GetRegister(Instruction.Register2) + (sbyte)Instruction.Parameter);
             }
 
-            // Cycle
         }
 
         public void ExecuteInstructionLDH()
@@ -1064,11 +1070,72 @@ namespace GameboyEmulator
                     }
                     return;
 
-
-
-
             }
 
+        }
+
+        public void ExecuteInstructionINC()
+        {
+            // If incrementing a single Byte register
+            if(Instruction.Register1 < eRegisterType.AF)
+            {
+                Byte value = GetRegister(Instruction.Register1) + 1;
+                SetRegister(Instruction.Register1, value);
+                SetFlags(value == 0, 0, (value & 0x0F) == 0, -1);
+                return;
+            }
+
+            // If incrementing (HL)
+            if(Instruction.AddressingMode == eAddressingMode.MemoryRegister)
+            {
+                Byte value = Bus.Read(GetRegister(eRegisterType.HL)) + 1;
+                Bus.Write(GetRegister(eRegisterType.HL), value);
+                SetFlags(value == 0, 0, (value & 0x0F) == 0, -1);
+                // Cycle
+                // Cycle
+                return;
+            }
+
+            // If incrementing a register pair
+            if(Instruction.Register1 >= eRegisterType.AF)
+            {
+                Word value = GetRegister(Instruction.Register1) + 1;
+                SetRegister(Instruction.Register1, value);
+                // Cycle
+                return;
+            }
+        }
+
+        public void ExecuteInstructionDEC()
+        {
+            // If decrementing a single Byte register
+            if (Instruction.Register1 < eRegisterType.AF)
+            {
+                Byte value = GetRegister(Instruction.Register1) - 1;
+                SetRegister(Instruction.Register1, value);
+                SetFlags(value == 0, 1, (value & 0x0F) == 0x0F, -1);
+                return;
+            }
+
+            // If decrementing (HL)
+            if (Instruction.AddressingMode == eAddressingMode.MemoryRegister)
+            {
+                Byte value = Bus.Read(GetRegister(eRegisterType.HL)) - 1;
+                Bus.Write(GetRegister(eRegisterType.HL), value);
+                SetFlags(value == 0, 1, (value & 0x0F) == 0x0F, -1);
+                // Cycle
+                // Cycle
+                return;
+            }
+
+            // If decrementing a register pair
+            if (Instruction.Register1 >= eRegisterType.AF)
+            {
+                Word value = GetRegister(Instruction.Register1) - 1;
+                SetRegister(Instruction.Register1, value);
+                // Cycle
+                return;
+            }
         }
         #endregion
 

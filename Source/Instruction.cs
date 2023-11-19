@@ -26,7 +26,9 @@ namespace GameboyEmulator
         XOR,
         OR,
         CP,
-        CB
+        CB,
+        INC,
+        DEC
     }
 
     public enum eAddressingMode
@@ -34,6 +36,7 @@ namespace GameboyEmulator
         None,
         Implied,
         Register,
+        MemoryRegister,
         Register_Register,
         Register_MemoryRegister,
         MemoryRegister_Register,
@@ -68,38 +71,9 @@ namespace GameboyEmulator
         AF,
         BC,
         DE,
-        [Description("(HL)")]
         HL,
         SP,
         PC
-    }
-
-    public static class InstructionExtension
-    {
-        public static string? GetDescription(this Enum value)
-        {
-            Type type = value.GetType();
-            string? name = Enum.GetName(type, value);
-            if (name != null)
-            {
-                FieldInfo? field = type.GetField(name);
-                if (field != null)
-                {
-                    DescriptionAttribute? attr =
-                           Attribute.GetCustomAttribute(field,
-                             typeof(DescriptionAttribute)) as DescriptionAttribute;
-                    if (attr != null)
-                    {
-                        return attr.Description;
-                    }
-                    else
-                    {
-                        return value.ToString();
-                    }
-                }
-            }
-            return null;
-        }
     }
 
     public enum eConditionType
@@ -142,68 +116,68 @@ namespace GameboyEmulator
                 case 0x00: SetUpInstruction(eInstructionType.None); break;
                 case 0x01: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.BC); break;
                 case 0x02: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.BC, eRegisterType.A); break;
-                case 0x03: SetUpInstruction(eInstructionType.None); break;
-                case 0x04: SetUpInstruction(eInstructionType.None); break;
-                case 0x05: SetUpInstruction(eInstructionType.None); break;
+                case 0x03: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.BC); break;
+                case 0x04: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.B); break;
+                case 0x05: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.B); break;
                 case 0x06: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.B); break;
                 case 0x07: SetUpInstruction(eInstructionType.None); break;
                 case 0x08: SetUpInstruction(eInstructionType.LD, eAddressingMode.A16_Register, eRegisterType.None, eRegisterType.SP); break;
                 case 0x09: SetUpInstruction(eInstructionType.None); break;
                 case 0x0A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.A, eRegisterType.BC); break;
-                case 0x0B: SetUpInstruction(eInstructionType.None); break;
-                case 0x0C: SetUpInstruction(eInstructionType.None); break;
-                case 0x0D: SetUpInstruction(eInstructionType.None); break;
+                case 0x0B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.BC); break;
+                case 0x0C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.C); break;
+                case 0x0D: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.C); break;
                 case 0x0E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.C); break;
                 case 0x0F: SetUpInstruction(eInstructionType.None); break;
 
                 case 0x10: SetUpInstruction(eInstructionType.None); break;
                 case 0x11: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.DE); break;
                 case 0x12: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.DE, eRegisterType.A); break;
-                case 0x13: SetUpInstruction(eInstructionType.None); break;
-                case 0x14: SetUpInstruction(eInstructionType.None); break;
-                case 0x15: SetUpInstruction(eInstructionType.None); break;
+                case 0x13: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.DE); break;
+                case 0x14: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.D); break;
+                case 0x15: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.D); break;
                 case 0x16: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.D); break;
                 case 0x17: SetUpInstruction(eInstructionType.None); break;
                 case 0x18: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8); break;
                 case 0x19: SetUpInstruction(eInstructionType.None); break;
                 case 0x1A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.A, eRegisterType.DE); break;
-                case 0x1B: SetUpInstruction(eInstructionType.None); break;
-                case 0x1C: SetUpInstruction(eInstructionType.None); break;
-                case 0x1D: SetUpInstruction(eInstructionType.None); break;
+                case 0x1B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.DE); break;
+                case 0x1C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.E); break;
+                case 0x1D: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.E); break;
                 case 0x1E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.E); break;
                 case 0x1F: SetUpInstruction(eInstructionType.None); break;
 
                 case 0x20: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.NZ); break;
                 case 0x21: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.HL); break;
                 case 0x22: SetUpInstruction(eInstructionType.LD, eAddressingMode.HLI_Register, eRegisterType.HL, eRegisterType.A); break;
-                case 0x23: SetUpInstruction(eInstructionType.None); break;
-                case 0x24: SetUpInstruction(eInstructionType.None); break;
-                case 0x25: SetUpInstruction(eInstructionType.None); break;
+                case 0x23: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.HL); break;
+                case 0x24: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.H); break;
+                case 0x25: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.H); break;
                 case 0x26: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.H); break;
                 case 0x27: SetUpInstruction(eInstructionType.None); break;
                 case 0x28: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.Z); break;
                 case 0x29: SetUpInstruction(eInstructionType.None); break;
                 case 0x2A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_HLI, eRegisterType.A, eRegisterType.HL); break;
-                case 0x2B: SetUpInstruction(eInstructionType.None); break;
-                case 0x2C: SetUpInstruction(eInstructionType.None); break;
-                case 0x2D: SetUpInstruction(eInstructionType.None); break;
+                case 0x2B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.HL); break;
+                case 0x2C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.L); break;
+                case 0x2D: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.L); break;
                 case 0x2E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.L); break;
                 case 0x2F: SetUpInstruction(eInstructionType.None); break;
 
                 case 0x30: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.NC); break;
                 case 0x31: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.SP); break;
                 case 0x32: SetUpInstruction(eInstructionType.LD, eAddressingMode.HLD_Register, eRegisterType.HL, eRegisterType.A); break;
-                case 0x33: SetUpInstruction(eInstructionType.None); break;
-                case 0x34: SetUpInstruction(eInstructionType.None); break;
-                case 0x35: SetUpInstruction(eInstructionType.None); break;
+                case 0x33: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.SP); break;
+                case 0x34: SetUpInstruction(eInstructionType.INC, eAddressingMode.MemoryRegister, eRegisterType.HL); break;
+                case 0x35: SetUpInstruction(eInstructionType.DEC, eAddressingMode.MemoryRegister, eRegisterType.HL); break;
                 case 0x36: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_D8, eRegisterType.HL); break;
                 case 0x37: SetUpInstruction(eInstructionType.None); break;
                 case 0x38: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.C); break;
                 case 0x39: SetUpInstruction(eInstructionType.None); break;
                 case 0x3A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_HLD, eRegisterType.A, eRegisterType.HL); break;
-                case 0x3B: SetUpInstruction(eInstructionType.None); break;
-                case 0x3C: SetUpInstruction(eInstructionType.None); break;
-                case 0x3D: SetUpInstruction(eInstructionType.None); break;
+                case 0x3B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.SP); break;
+                case 0x3C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.A); break;
+                case 0x3D: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.A); break;
                 case 0x3E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.A); break;
                 case 0x3F: SetUpInstruction(eInstructionType.None); break;
 
@@ -478,14 +452,24 @@ namespace GameboyEmulator
                     break;
                 case eAddressingMode.Register:
                     sb.Append(' ');
-                    sb.Append(Register1.GetDescription());
+                    sb.Append(Register1.ToString());
+                    break;
+                case eAddressingMode.MemoryRegister:
+                    sb.Append(' ');
+                    sb.Append("(" + Register1.ToString() + ")");
                     break;
 
                 case eAddressingMode.Register_Register:
+                    sb.Append(' ');
+                    sb.Append(Register1.ToString() + "," + Register2.ToString());
+                    break;
                 case eAddressingMode.Register_MemoryRegister:
+                    sb.Append(' ');
+                    sb.Append(Register1.ToString() + "," + "(" + Register2.ToString() + ")");
+                    break;
                 case eAddressingMode.MemoryRegister_Register:
                     sb.Append(' ');
-                    sb.Append(Register1.GetDescription() + "," + Register2.GetDescription());
+                    sb.Append("(" + Register1.ToString() + ")" + "," + Register2.ToString());
                     break;
 
                 case eAddressingMode.Register_D8:
@@ -551,6 +535,12 @@ namespace GameboyEmulator
                     if (ConditionType != eConditionType.None)
                         sb.Append(ConditionType.ToString() + ",");
                     sb.Append("R8");
+                    break;
+
+                case eAddressingMode.Implied:
+                    sb.Append(' ');
+                    if (ConditionType != eConditionType.None)
+                        sb.Append(ConditionType.ToString());
                     break;
 
                 default:
