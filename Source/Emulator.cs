@@ -54,10 +54,7 @@ namespace GameboyEmulator
 
                     InstructionCount++;
                     BlarggUpdate();
-                    if (InstructionCount % 1000 == 0)
-                    {
-                        BlarggDisplay();
-                    }
+
 
 
                     //Thread.Sleep(10);
@@ -88,14 +85,20 @@ namespace GameboyEmulator
                 Byte val = Bus.Read(0xFF01);
                 //MessageBox.Show("DBG_Update() - " + val.ToHexString());
 
-                if (val != 0)
+                if (val == 10 || val == 13)
+                {
+                    val = 32;
+                } 
+
+                if(val >= 32 && val <= 126)
                 {
                     char c = (char)val;
                     BlarggMessage = BlarggMessage + c.ToString();
-                    
                 }
 
                 Bus.Write(0xFF02, 0);
+
+                BlarggDisplay();
             }
         }
 
