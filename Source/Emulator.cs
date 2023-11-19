@@ -75,7 +75,9 @@ namespace GameboyEmulator
         #region BLARGG Tests
         private int InstructionCount = 0;
 
-        private string BlarggMessage = string.Empty;
+        public string BlarggMessage = string.Empty;
+
+        public bool ShowBlargg { get; set; } = true;
 
         public void BlarggUpdate()
         {
@@ -104,7 +106,7 @@ namespace GameboyEmulator
 
         public void BlarggDisplay()
         {
-            if (BlarggMessage != string.Empty)
+            if (ShowBlargg && BlarggMessage != string.Empty)
             {
                 Logger.WriteLine("Blarrg - \"" + BlarggMessage + "\"", Logger.LogLevel.Information);
             }

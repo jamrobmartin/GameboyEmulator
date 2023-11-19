@@ -1,4 +1,6 @@
+using System.ComponentModel;
 using System.Text;
+using System.Windows.Forms;
 
 namespace GameboyEmulator
 {
@@ -137,6 +139,54 @@ namespace GameboyEmulator
         {
             ImplementedInstructionsForm form = new ImplementedInstructionsForm();
             form.ShowDialog();
+        }
+
+        string TestResults = string.Empty;
+        string TestFolderPath = string.Empty;
+
+        private void runToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog folderBrowserDialog = new FolderBrowserDialog();
+
+            DialogResult result = folderBrowserDialog.ShowDialog();
+
+            if(result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+            {
+                TestFolderPath = folderBrowserDialog.SelectedPath;
+
+                BackgroundWorker worker = new BackgroundWorker();
+                worker.DoWork += Worker_DoWork;
+                worker.RunWorkerCompleted += Worker_RunWorkerCompleted;
+                worker.RunWorkerAsync();
+            }
+
+            
+        }
+
+        private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
+        {
+            Logger.WriteLine(TestResults, Logger.LogLevel.Information);
+        }
+
+        private void Worker_DoWork(object? sender, DoWorkEventArgs e)
+        {
+            Logger.WriteLine("Running all files in the folder: " + TestFolderPath, Logger.LogLevel.Information);
+
+            string[] files = Directory.GetFiles(TestFolderPath);
+
+            Emulator.Instance.ShowBlargg = false;
+
+            foreach (var file in files)
+            {
+                FileInfo info = new FileInfo(file);
+
+                Cartridge.Instance.InsertCartridge(file);
+                Emulator.Instance.TurnPowerOn();
+                Thread.Sleep(20000);
+                TestResults += Environment.NewLine + "Testing File: " + info.Name + Environment.NewLine;
+                TestResults += "Output: \"" + Emulator.Instance.BlarggMessage + "\"" + Environment.NewLine;
+                Emulator.Instance.TurnPowerOff();
+            }
         }
     }
 }
