@@ -1234,7 +1234,7 @@ namespace GameboyEmulator
                         regVal <<= 1;
                         regVal |= (old & 0x80) >> 7;
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
                     }
                     return;
@@ -1246,7 +1246,7 @@ namespace GameboyEmulator
                         regVal >>= 1;
                         regVal |= (old << 7);
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, old & 1);
                     }
                     return;
@@ -1258,7 +1258,7 @@ namespace GameboyEmulator
                         regVal <<= 1;
                         regVal |= cFlag;
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
                     }
                     return;
@@ -1270,7 +1270,7 @@ namespace GameboyEmulator
                         regVal >>= 1;
                         regVal |= (cFlag << 7);
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, old & 1);
                     }
                     return;
@@ -1281,7 +1281,7 @@ namespace GameboyEmulator
                         Byte old = regVal;
                         regVal <<= 1;
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, !!(Byte)(old & 0x80));
                     }
                     return;
@@ -1292,7 +1292,7 @@ namespace GameboyEmulator
                         Byte old = regVal;
                         regVal  = (sbyte)regVal >> 1;
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, old & 1);
                     }
                     return;
@@ -1302,7 +1302,7 @@ namespace GameboyEmulator
                         // SWAP
                         regVal = ((regVal & 0xF0) >> 4) | ((regVal & 0xF) << 4);
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, 0);
                     }
                     return;
@@ -1313,7 +1313,7 @@ namespace GameboyEmulator
                         Byte old = regVal;
                         regVal = regVal >> 1;
 
-                        SetRegister(reg, regVal);
+                        SetRegister8(reg, regVal);
                         SetFlags(!regVal, 0, 0, old & 1);
                     }
                     return;
