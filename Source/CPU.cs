@@ -846,6 +846,23 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.SP, result);
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+                Word result = a + param;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) + (param & 0xF) >= 0x10;
+                bool cFlag = (a & 0xFF) + (param & 0xFF) >= 0x100;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+
+                if(Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
+            }
         }
 
         public void ExecuteInstructionADC()
@@ -864,6 +881,25 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.A, result);
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+                Byte c = CFlag;
+
+                Word result = (a + param + c) & 0xFF;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) + (param & 0xF) + c >= 0x10;
+                bool cFlag = (a & 0xFF) + (param & 0xFF) + c >= 0x100;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
+            }
         }
 
         public void ExecuteInstructionSUB()
@@ -879,6 +915,23 @@ namespace GameboyEmulator
 
                 SetRegister(eRegisterType.A, result);
                 SetFlags(zFlag, 1, hFlag, cFlag);
+            }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+                Word result = a - param;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool cFlag = (a & 0xFF) - (param & 0xFF) < 0;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 1, hFlag, cFlag);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
             }
         }
 
@@ -898,6 +951,25 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.A, result);
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+                Byte c = CFlag;
+
+                Word result = (a - param - c) & 0xFF;
+                bool zFlag = (result & 0xFF) == 0;
+                bool hFlag = (a & 0xF) - (param & 0xF) - c < 0;
+                bool cFlag = (a & 0xFF) - (param & 0xFF) - c < 0;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(zFlag, 0, hFlag, cFlag);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
+            }
         }
 
         public void ExecuteInstructionAND()
@@ -911,6 +983,21 @@ namespace GameboyEmulator
 
                 SetRegister(eRegisterType.A, result);
                 SetFlags(result == 0, 0, 1, 0);
+            }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+
+                Byte result = a & param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 1, 0);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
             }
         }
 
@@ -926,6 +1013,21 @@ namespace GameboyEmulator
                 SetRegister(eRegisterType.A, result);
                 SetFlags(result == 0, 0, 0, 0);
             }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+
+                Byte result = a ^ param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 0, 0);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
+            }
         }
 
         public void ExecuteInstructionOR()
@@ -939,6 +1041,21 @@ namespace GameboyEmulator
 
                 SetRegister(eRegisterType.A, result);
                 SetFlags(result == 0, 0, 0, 0);
+            }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+
+                Byte result = a | param;
+
+                SetRegister(eRegisterType.A, result);
+                SetFlags(result == 0, 0, 0, 0);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
             }
         }
 
@@ -955,6 +1072,23 @@ namespace GameboyEmulator
                 bool cFlag = result < 0;
 
                 SetFlags(result == 0, 1, hFlag, CFlag);
+            }
+            else
+            {
+                Byte param = GetRegister8(Instruction.Register2);
+                Byte a = A;
+
+                Byte result = a - param;
+
+                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool cFlag = result < 0;
+
+                SetFlags(result == 0, 1, hFlag, CFlag);
+
+                if (Instruction.Register2 == eRegisterType.HL)
+                {
+                    // Cycle
+                }
             }
         }
 
