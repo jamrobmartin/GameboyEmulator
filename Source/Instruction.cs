@@ -136,7 +136,7 @@ namespace GameboyEmulator
                 case 0x06: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.B); break;
                 case 0x07: SetUpInstruction(eInstructionType.RLCA); break;
                 case 0x08: SetUpInstruction(eInstructionType.LD, eAddressingMode.A16_Register, eRegisterType.None, eRegisterType.SP); break;
-                case 0x09: SetUpInstruction(eInstructionType.None); break;
+                case 0x09: SetUpInstruction(eInstructionType.ADD, eAddressingMode.Register_Register, eRegisterType.HL, eRegisterType.BC); break;
                 case 0x0A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.A, eRegisterType.BC); break;
                 case 0x0B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.BC); break;
                 case 0x0C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.C); break;
@@ -153,7 +153,7 @@ namespace GameboyEmulator
                 case 0x16: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.D); break;
                 case 0x17: SetUpInstruction(eInstructionType.RLA); break;
                 case 0x18: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8); break;
-                case 0x19: SetUpInstruction(eInstructionType.None); break;
+                case 0x19: SetUpInstruction(eInstructionType.ADD, eAddressingMode.Register_Register, eRegisterType.HL, eRegisterType.DE); break;
                 case 0x1A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_MemoryRegister, eRegisterType.A, eRegisterType.DE); break;
                 case 0x1B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.DE); break;
                 case 0x1C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.E); break;
@@ -170,7 +170,7 @@ namespace GameboyEmulator
                 case 0x26: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.H); break;
                 case 0x27: SetUpInstruction(eInstructionType.DAA); break;
                 case 0x28: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.Z); break;
-                case 0x29: SetUpInstruction(eInstructionType.None); break;
+                case 0x29: SetUpInstruction(eInstructionType.ADD, eAddressingMode.Register_Register, eRegisterType.HL, eRegisterType.HL); break;
                 case 0x2A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_HLI, eRegisterType.A, eRegisterType.HL); break;
                 case 0x2B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.HL); break;
                 case 0x2C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.L); break;
@@ -187,7 +187,7 @@ namespace GameboyEmulator
                 case 0x36: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_D8, eRegisterType.HL); break;
                 case 0x37: SetUpInstruction(eInstructionType.SCF); break;
                 case 0x38: SetUpInstruction(eInstructionType.JR, eAddressingMode.D8, eRegisterType.None, eRegisterType.None, eConditionType.C); break;
-                case 0x39: SetUpInstruction(eInstructionType.None); break;
+                case 0x39: SetUpInstruction(eInstructionType.ADD, eAddressingMode.Register_Register, eRegisterType.HL, eRegisterType.SP); break;
                 case 0x3A: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_HLD, eRegisterType.A, eRegisterType.HL); break;
                 case 0x3B: SetUpInstruction(eInstructionType.DEC, eAddressingMode.Register, eRegisterType.SP); break;
                 case 0x3C: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.A); break;

@@ -871,6 +871,21 @@ namespace GameboyEmulator
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
             else
+            if(Instruction.AddressingMode == eAddressingMode.Register_Register)
+            {
+                Word param = GetRegister(Instruction.Register2);
+                Word reg = GetRegister(Instruction.Register1);
+
+                Word result = reg + param;
+
+                bool hFlag = (reg & 0xFFF) + (param & 0xFFF) >= 0x1000;
+                UInt32 n = (UInt32)reg + (UInt32)param;
+                bool cFlag = n >= 0x10000;
+
+                SetRegister(Instruction.Register1, result & 0xFFFF);
+                SetFlags(-1, 0, hFlag, cFlag);
+            }
+            else
             {
                 Byte param = GetRegister8(Instruction.Register2);
                 Byte a = A;

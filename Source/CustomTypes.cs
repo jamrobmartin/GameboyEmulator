@@ -35,6 +35,7 @@ namespace GameboyEmulator
         public static implicit operator Word(int value) { return new Word(value); }
         public static implicit operator Word(Byte value) { return new Word(value); }
         public static implicit operator int(Word custom) { return custom._value; }
+        public static implicit operator uint(Word custom) { return custom._value; }
 
 
         public string ToHexString()
