@@ -306,22 +306,24 @@ namespace GameboyEmulator
 
         public void SetFlags(Byte z, Byte n, Byte h, Byte c)
         {
-            if (z != -1)
+            Byte DontUpdate = (Byte)(-1);
+
+            if (z != DontUpdate)
             {
                 ZFlag = z;
             }
 
-            if (n != -1)
+            if (n != DontUpdate)
             {
                 NFlag = n;
             }
 
-            if (h != -1)
+            if (h != DontUpdate)
             {
                 HFlag = h;
             }
 
-            if (c != -1)
+            if (c != DontUpdate)
             {
                 CFlag = c;
             }
@@ -653,9 +655,13 @@ namespace GameboyEmulator
                         Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
                     }
                 }
+                else
+                {
+                    // If not a register, is must be a value
+                    Bus.Write(Instruction.DestinationAddress, Instruction.Parameter);
+                }
 
-                // If not a register, is must be a value
-                Bus.Write(Instruction.DestinationAddress, Instruction.Parameter);
+                // Cycle
 
             }
 
@@ -1079,7 +1085,7 @@ namespace GameboyEmulator
             // If incrementing a single Byte register
             if(Instruction.Register1 < eRegisterType.AF)
             {
-                Byte value = GetRegister(Instruction.Register1) + 1;
+                Byte value = (GetRegister(Instruction.Register1) + 1) & 0xFF;
                 SetRegister(Instruction.Register1, value);
                 SetFlags(value == 0, 0, (value & 0x0F) == 0, -1);
                 return;
@@ -1088,7 +1094,7 @@ namespace GameboyEmulator
             // If incrementing (HL)
             if(Instruction.AddressingMode == eAddressingMode.MemoryRegister)
             {
-                Byte value = Bus.Read(GetRegister(eRegisterType.HL)) + 1;
+                Byte value = (Bus.Read(GetRegister(eRegisterType.HL)) + 1) & 0xFF;
                 Bus.Write(GetRegister(eRegisterType.HL), value);
                 SetFlags(value == 0, 0, (value & 0x0F) == 0, -1);
                 // Cycle
@@ -1111,8 +1117,9 @@ namespace GameboyEmulator
             // If decrementing a single Byte register
             if (Instruction.Register1 < eRegisterType.AF)
             {
-                Byte value = GetRegister(Instruction.Register1) - 1;
+                Byte value = (GetRegister(Instruction.Register1) - 1) & 0xFF;
                 SetRegister(Instruction.Register1, value);
+                value = GetRegister8(Instruction.Register1);
                 SetFlags(value == 0, 1, (value & 0x0F) == 0x0F, -1);
                 return;
             }
@@ -1120,7 +1127,7 @@ namespace GameboyEmulator
             // If decrementing (HL)
             if (Instruction.AddressingMode == eAddressingMode.MemoryRegister)
             {
-                Byte value = Bus.Read(GetRegister(eRegisterType.HL)) - 1;
+                Byte value = (Bus.Read(GetRegister(eRegisterType.HL)) - 1) & 0xFF;
                 Bus.Write(GetRegister(eRegisterType.HL), value);
                 SetFlags(value == 0, 1, (value & 0x0F) == 0x0F, -1);
                 // Cycle
