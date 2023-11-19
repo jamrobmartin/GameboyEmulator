@@ -605,6 +605,12 @@ namespace GameboyEmulator
                 case eInstructionType.EI:
                     ExecuteInstructionEI();
                     break;
+                case eInstructionType.POP:
+                    ExecuteInstructionPOP();
+                    break;
+                case eInstructionType.PUSH:
+                    ExecuteInstructionPUSH();
+                    break;
                 default:
                     break;
             }
@@ -1181,6 +1187,31 @@ namespace GameboyEmulator
         {
             // You need to go through a CPU step before you can start handling interupts
             EnablingIME = true;
+        }
+
+        public void ExecuteInstructionPOP()
+        {
+            Word value = Pop16();
+
+            if(Instruction.Register1 == eRegisterType.AF)
+            {
+                value = value & 0xFFF0;
+            }
+
+            SetRegister(Instruction.Register1, value);
+            
+            // Cycle
+            // Cycle
+        }
+
+        public void ExecuteInstructionPUSH()
+        {
+            Word value = GetRegister(Instruction.Register1);
+
+            Push16(value);
+            // Cycle
+            // Cycle
+            // Cycle
         }
         #endregion
 
