@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -169,6 +170,13 @@ namespace GameboyEmulator
                 case eInstructionType.POP:
                 case eInstructionType.PUSH:
                     color = Color.FromArgb(255, 204, 255, 204);
+                    break;
+
+                case eInstructionType.RLCA:
+                case eInstructionType.RRCA:
+                case eInstructionType.RLA:
+                case eInstructionType.RRA:
+                    color = Color.FromArgb(255, 128, 255, 255);
                     break;
 
                 case eInstructionType.NOP:

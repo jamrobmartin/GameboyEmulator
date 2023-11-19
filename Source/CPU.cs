@@ -623,6 +623,18 @@ namespace GameboyEmulator
                 case eInstructionType.CCF:
                     ExecuteInstructionCCF();
                     break;
+                case eInstructionType.RLCA:
+                    ExecuteInstructionRLCA();
+                    break;
+                case eInstructionType.RRCA:
+                    ExecuteInstructionRRCA();
+                    break;
+                case eInstructionType.RLA:
+                    ExecuteInstructionRLA();
+                    break;
+                case eInstructionType.RRA:
+                    ExecuteInstructionRRA();
+                    break;
                 default:
                     break;
             }
@@ -1396,6 +1408,45 @@ namespace GameboyEmulator
         public void ExecuteInstructionCCF() 
         {
             SetFlags(-1, 0, 0, (Byte)CFlag ^ 1);
+        }
+
+        public void ExecuteInstructionRLCA()
+        {
+            Byte u = A;
+            Byte c = (u >> 7) & 1;
+            u = (u << 1) | c;
+            A = u;
+            SetFlags(0, 0, 0, c);
+        }
+
+        public void ExecuteInstructionRRCA()
+        {
+            Byte b = A & 1;
+            A >>= 1;
+            A |= (b << 7);
+
+            SetFlags(0, 0, 0, b);
+        }
+
+        public void ExecuteInstructionRLA()
+        {
+            Byte u = A;
+            Byte cf = CFlag;
+            Byte c = (u >> 7) & 1;
+
+            A = (u << 1) | cf;
+            SetFlags(0, 0, 0, c);
+        }
+
+        public void ExecuteInstructionRRA()
+        {
+            Byte c = CFlag;
+            Byte newC = A & 1;
+
+            A >>= 1;
+            A |= (c << 7);
+
+            SetFlags(0, 0, 0, newC);
         }
         #endregion
 
