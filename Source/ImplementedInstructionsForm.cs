@@ -159,6 +159,13 @@ namespace GameboyEmulator
                     
                     break;
 
+                case eInstructionType.DAA:
+                case eInstructionType.CPL:
+                case eInstructionType.SCF:
+                case eInstructionType.CCF:
+                    color = Color.FromArgb(255, 255, 255, 153);
+                    break;
+
                 case eInstructionType.POP:
                 case eInstructionType.PUSH:
                     color = Color.FromArgb(255, 204, 255, 204);

@@ -611,6 +611,18 @@ namespace GameboyEmulator
                 case eInstructionType.PUSH:
                     ExecuteInstructionPUSH();
                     break;
+                case eInstructionType.DAA:
+                    ExecuteInstructionDAA();
+                    break;
+                case eInstructionType.CPL:
+                    ExecuteInstructionCPL();
+                    break;
+                case eInstructionType.SCF:
+                    ExecuteInstructionSCF();
+                    break;
+                case eInstructionType.CCF:
+                    ExecuteInstructionCCF();
+                    break;
                 default:
                     break;
             }
@@ -1346,6 +1358,44 @@ namespace GameboyEmulator
             // Cycle
             // Cycle
             // Cycle
+        }
+
+        public void ExecuteInstructionDAA()
+        {
+            Byte u = 0;
+            Byte fc = 0;
+
+            if(HFlag || (!NFlag && (A & 0xF) > 9))
+            {
+                u = 6;
+            }
+
+            if (CFlag || (!NFlag && A  > 0x99))
+            {
+                u |= 0x60;
+                fc = 1;
+            }
+
+            A += NFlag ? 0-u : u;
+
+            SetFlags(A == 0, -1, 0, fc);
+
+        }
+
+        public void ExecuteInstructionCPL()
+        {
+            A = ~A;
+            SetFlags(-1, 1, 1, -1);
+        }
+
+        public void ExecuteInstructionSCF()
+        {
+            SetFlags(-1, 0, 0, 1);
+        }
+
+        public void ExecuteInstructionCCF() 
+        {
+            SetFlags(-1, 0, 0, (Byte)CFlag ^ 1);
         }
         #endregion
 
