@@ -160,6 +160,11 @@ namespace GameboyEmulator
 
         #endregion
 
+        #region Interupts
+        public bool InteruptMasterEnabled { get; set; } = false;
+        public bool EnablingIME { get; set; } = false;
+        #endregion
+
         public CPU()
         {
             A = 0; F = 0;
@@ -365,6 +370,22 @@ namespace GameboyEmulator
             InterpretInstruction();
 
             ExecuteInstruction();
+
+            if(InteruptMasterEnabled)
+            {
+                EnablingIME = false;
+                HandleInterupts();
+            }
+
+            if(EnablingIME)
+            {
+                InteruptMasterEnabled = true;
+            }
+        }
+
+        public void HandleInterupts()
+        {
+
         }
 
         public void FetchInstruction()
@@ -577,6 +598,12 @@ namespace GameboyEmulator
                     break;
                 case eInstructionType.DEC:
                     ExecuteInstructionDEC();
+                    break;
+                case eInstructionType.DI:
+                    ExecuteInstructionDI();
+                    break;
+                case eInstructionType.EI:
+                    ExecuteInstructionEI();
                     break;
                 default:
                     break;
@@ -1143,6 +1170,17 @@ namespace GameboyEmulator
                 // Cycle
                 return;
             }
+        }
+
+        public void ExecuteInstructionDI()
+        {
+            InteruptMasterEnabled = false;
+        }
+
+        public void ExecuteInstructionEI()
+        {
+            // You need to go through a CPU step before you can start handling interupts
+            EnablingIME = true;
         }
         #endregion
 
