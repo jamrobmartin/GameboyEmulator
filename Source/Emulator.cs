@@ -42,6 +42,8 @@ namespace GameboyEmulator
 
             InstructionCount = 0;
 
+            BlarggMessage = string.Empty;
+
             while (PoweredOn)
             {
                 try
