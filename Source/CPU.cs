@@ -907,7 +907,7 @@ namespace GameboyEmulator
                 SetFlags(zFlag, 0, hFlag, cFlag);
             }
             else
-            if(Instruction.AddressingMode == eAddressingMode.Register_Register)
+            if(Instruction.AddressingMode == eAddressingMode.Register_Register && Instruction.Register1 >= eRegisterType.AF)
             {
                 Word param = GetRegister(Instruction.Register2);
                 Word reg = GetRegister(Instruction.Register1);
