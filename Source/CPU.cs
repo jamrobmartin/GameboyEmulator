@@ -163,6 +163,8 @@ namespace GameboyEmulator
         #region Interupts
         public bool InteruptMasterEnabled { get; set; } = false;
         public bool EnablingIME { get; set; } = false;
+
+        public bool Halted { get; set; } = false;
         #endregion
 
         public CPU()
@@ -172,6 +174,11 @@ namespace GameboyEmulator
             D = 0; E = 0;
             H = 0; L = 0;
             SP = 0; PC = 0;
+
+            InteruptMasterEnabled = false;
+            EnablingIME = false;
+            Halted = false;
+
             InstructionRegister = 0;
             InstructionAddress = 0;
             Instruction = new Instruction();
@@ -186,6 +193,10 @@ namespace GameboyEmulator
             BC = 0x1300;
             DE = 0xD800;
             HL = 0x4D01;
+
+            InteruptMasterEnabled = false;
+            EnablingIME = false;
+            Halted = false;
 
             InstructionRegister = 0;
             InstructionAddress = 0;
@@ -363,13 +374,23 @@ namespace GameboyEmulator
         #region CPU Step
         public void Step()
         {
-            FetchInstruction();
+            if(!Halted)
+            {
+                FetchInstruction();
 
-            FetchData();
+                FetchData();
 
-            InterpretInstruction();
+                InterpretInstruction();
 
-            ExecuteInstruction();
+                ExecuteInstruction();
+            }
+            else
+            {
+                // Cycle
+
+                Halted = false;
+            }
+            
 
             if(InteruptMasterEnabled)
             {
@@ -566,6 +587,9 @@ namespace GameboyEmulator
                 case eInstructionType.RET:
                     ExecuteInstructionRET();
                     break;
+                case eInstructionType.RETI:
+                    ExecuteInstructionRETI();
+                    break;
                 case eInstructionType.ADD:
                     ExecuteInstructionADD();
                     break;
@@ -637,6 +661,9 @@ namespace GameboyEmulator
                     break;
                 case eInstructionType.RST:
                     ExecuteInstructionRST();
+                    break;
+                case eInstructionType.HALT:
+                    ExecuteInstructionHALT();
                     break;
                 default:
                     break;
@@ -844,6 +871,12 @@ namespace GameboyEmulator
 
                 // Cycle
             }
+        }
+
+        public void ExecuteInstructionRETI()
+        {
+            InteruptMasterEnabled = true;
+            ExecuteInstructionRET();
         }
 
         public void ExecuteInstructionADD()
@@ -1476,6 +1509,11 @@ namespace GameboyEmulator
             SetRegister(eRegisterType.PC, Instruction.Parameter);
 
             // Cycle
+        }
+
+        public void ExecuteInstructionHALT()
+        {
+            Halted = true;
         }
         #endregion
 
