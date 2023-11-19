@@ -985,8 +985,8 @@ namespace GameboyEmulator
                 Byte a = A;
                 Word result = a - param;
                 bool zFlag = (result & 0xFF) == 0;
-                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
-                bool cFlag = (a & 0xFF) - (param & 0xFF) < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) < 0;
+                bool cFlag = ((int)a & 0xFF) - ((int)param & 0xFF) < 0;
 
                 SetRegister(eRegisterType.A, result);
                 SetFlags(zFlag, 1, hFlag, cFlag);
@@ -997,8 +997,8 @@ namespace GameboyEmulator
                 Byte a = A;
                 Word result = a - param;
                 bool zFlag = (result & 0xFF) == 0;
-                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
-                bool cFlag = (a & 0xFF) - (param & 0xFF) < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) < 0;
+                bool cFlag = ((int)a & 0xFF) - ((int)param & 0xFF) < 0;
 
                 SetRegister(eRegisterType.A, result);
                 SetFlags(zFlag, 1, hFlag, cFlag);
@@ -1020,11 +1020,11 @@ namespace GameboyEmulator
 
                 Word result = (a - param - c) & 0xFF;
                 bool zFlag = (result & 0xFF) == 0;
-                bool hFlag = (a & 0xF) - (param & 0xF) - c < 0;
-                bool cFlag = (a & 0xFF) - (param & 0xFF) - c < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) - (int)c < 0;
+                bool cFlag = ((int)a & 0xFF) - ((int)param & 0xFF) - (int)c < 0;
 
                 SetRegister(eRegisterType.A, result);
-                SetFlags(zFlag, 0, hFlag, cFlag);
+                SetFlags(zFlag, 1, hFlag, cFlag);
             }
             else
             {
@@ -1034,11 +1034,11 @@ namespace GameboyEmulator
 
                 Word result = (a - param - c) & 0xFF;
                 bool zFlag = (result & 0xFF) == 0;
-                bool hFlag = (a & 0xF) - (param & 0xF) - c < 0;
-                bool cFlag = (a & 0xFF) - (param & 0xFF) - c < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) - (int)c < 0;
+                bool cFlag = ((int)a & 0xFF) - ((int)param & 0xFF) - (int)c < 0;
 
                 SetRegister(eRegisterType.A, result);
-                SetFlags(zFlag, 0, hFlag, cFlag);
+                SetFlags(zFlag, 1, hFlag, cFlag);
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
@@ -1141,24 +1141,24 @@ namespace GameboyEmulator
                 Byte param = Instruction.Parameter;
                 Byte a = A;
 
-                Byte result = a - param;
+                int result = (int)a - (int)param;
 
-                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) < 0;
                 bool cFlag = result < 0;
 
-                SetFlags(result == 0, 1, hFlag, CFlag);
+                SetFlags(result == 0, 1, hFlag, cFlag);
             }
             else
             {
                 Byte param = GetRegister8(Instruction.Register2);
                 Byte a = A;
 
-                Byte result = a - param;
+                int result = (int)a - (int)param;
 
-                bool hFlag = (a & 0xF) - (param & 0xF) < 0;
+                bool hFlag = ((int)a & 0xF) - ((int)param & 0xF) < 0;
                 bool cFlag = result < 0;
 
-                SetFlags(result == 0, 1, hFlag, CFlag);
+                SetFlags(result == 0, 1, hFlag, cFlag);
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
