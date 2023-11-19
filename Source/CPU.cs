@@ -635,6 +635,9 @@ namespace GameboyEmulator
                 case eInstructionType.RRA:
                     ExecuteInstructionRRA();
                     break;
+                case eInstructionType.RST:
+                    ExecuteInstructionRST();
+                    break;
                 default:
                     break;
             }
@@ -1462,6 +1465,17 @@ namespace GameboyEmulator
             A |= (c << 7);
 
             SetFlags(0, 0, 0, newC);
+        }
+
+        public void ExecuteInstructionRST()
+        {
+            Push16(PC);
+            // Cycle
+            // Cycle
+
+            SetRegister(eRegisterType.PC, Instruction.Parameter);
+
+            // Cycle
         }
         #endregion
 
