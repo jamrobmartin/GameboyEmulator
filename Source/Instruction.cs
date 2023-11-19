@@ -12,6 +12,8 @@ namespace GameboyEmulator
     public enum eInstructionType
     {
         None,
+        NOP,
+        STOP,
         LD,
         LDH,
         JP,
@@ -113,7 +115,7 @@ namespace GameboyEmulator
         {
             switch (opcode)
             {
-                case 0x00: SetUpInstruction(eInstructionType.None); break;
+                case 0x00: SetUpInstruction(eInstructionType.NOP); break;
                 case 0x01: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.BC); break;
                 case 0x02: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.BC, eRegisterType.A); break;
                 case 0x03: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.BC); break;
@@ -130,7 +132,7 @@ namespace GameboyEmulator
                 case 0x0E: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D8, eRegisterType.C); break;
                 case 0x0F: SetUpInstruction(eInstructionType.None); break;
 
-                case 0x10: SetUpInstruction(eInstructionType.None); break;
+                case 0x10: SetUpInstruction(eInstructionType.STOP); break;
                 case 0x11: SetUpInstruction(eInstructionType.LD, eAddressingMode.Register_D16, eRegisterType.DE); break;
                 case 0x12: SetUpInstruction(eInstructionType.LD, eAddressingMode.MemoryRegister_Register, eRegisterType.DE, eRegisterType.A); break;
                 case 0x13: SetUpInstruction(eInstructionType.INC, eAddressingMode.Register, eRegisterType.DE); break;

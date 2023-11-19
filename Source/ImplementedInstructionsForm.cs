@@ -159,6 +159,8 @@ namespace GameboyEmulator
                     
                     break;
 
+                case eInstructionType.NOP:
+                case eInstructionType.STOP:
                 case eInstructionType.CB:
                     color = Color.FromArgb(255, 255, 153, 204);
                     break;
