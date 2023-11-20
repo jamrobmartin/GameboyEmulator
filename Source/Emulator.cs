@@ -17,6 +17,8 @@ namespace GameboyEmulator
 
         public bool PoweredOn { get; set; } = false;
 
+        public UInt64 Ticks { get; set; } = 0;
+
         #region ThreadLoop
 
         Thread? Thread { get; set; } = null;
@@ -39,8 +41,11 @@ namespace GameboyEmulator
         {
             // Init() Calls
             CPU.Instance.Init();
+            Timer.Instance.Init();
 
             InstructionCount = 0;
+
+            Ticks = 0;
 
             BlarggMessage = string.Empty;
 
@@ -71,6 +76,20 @@ namespace GameboyEmulator
 
         #endregion
 
+        #region Cycle
+        public void DoCycles(int cycles)
+        {
+            for (int i = 0; i < cycles; i++)
+            {
+                // Each cycle does 4 ticks
+                for(int j = 0; j < 4; j++)
+                {
+                    Ticks++;
+                    Timer.Instance.Tick();
+                }
+            }
+        }
+        #endregion
 
         #region BLARGG Tests
         private int InstructionCount = 0;
