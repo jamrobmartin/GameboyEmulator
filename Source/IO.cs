@@ -14,6 +14,7 @@ namespace GameboyEmulator
         #endregion
 
         private Byte[] serialData = { 0, 0 };
+        private Byte LY = 0;
 
         public Byte Read(Word address)
         {
@@ -23,6 +24,8 @@ namespace GameboyEmulator
             if (address >= 0xFF04 && address <= 0xFF07) { return Timer.Instance.Read(address); }
 
             if (address >= 0xFF0F && address <= 0xFF0F) { return CPU.Instance.IF; }
+
+            if (address >= 0xFF44 && address <= 0xFF44) { return LY++; }
 
             //throw new Exception("IO - Tried to read memory location: " + address.ToHexString());
             return 0x00;

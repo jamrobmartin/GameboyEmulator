@@ -23,6 +23,7 @@ namespace GameboyEmulator
             }
         }
 
+        #region R/W
         public Byte Read(Word address)
         {
             if (address >= 0xFE00 && address <= 0xFE9F) { return OAM[address - 0xFE00]; }
@@ -36,5 +37,7 @@ namespace GameboyEmulator
 
             throw new Exception("PPU - Tried to Write memory location: " + address.ToHexString());
         }
+        #endregion
+
     }
 }

@@ -100,6 +100,7 @@ namespace GameboyEmulator
         {
             if (Inserted)
             {
+                if (address >= 0x0000 && address <= 0x7FFF) { ROM[address] = value; return; }// Cartridge ROM
                 if (address >= 0xA000 && address <= 0xBFFF) { RAM[address - 0xA000] = value; return; }
 
                 throw new Exception("Cartridge - Tried to Write memory location: " + address.ToHexString());

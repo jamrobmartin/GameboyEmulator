@@ -16,10 +16,6 @@ namespace GameboyEmulator
 
             this.Location = new Point(0, 0);
 
-            DebugWindow debugWindow = new DebugWindow();
-            debugWindow.Show();
-            debugWindow.Location = new Point(this.Width, 0);
-
             ButtonPressed += GameboyForm_ButtonPressed;
             ButtonPressed += Emulator.Instance.GameboyForm_ButtonPressed;
 
@@ -150,7 +146,7 @@ namespace GameboyEmulator
 
             DialogResult result = folderBrowserDialog.ShowDialog();
 
-            if(result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
+            if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(folderBrowserDialog.SelectedPath))
             {
                 TestFolderPath = folderBrowserDialog.SelectedPath;
 
@@ -160,7 +156,7 @@ namespace GameboyEmulator
                 worker.RunWorkerAsync();
             }
 
-            
+
         }
 
         private void Worker_RunWorkerCompleted(object? sender, RunWorkerCompletedEventArgs e)
@@ -187,6 +183,17 @@ namespace GameboyEmulator
                 TestResults += "Output: \"" + Emulator.Instance.BlarggMessage + "\"" + Environment.NewLine;
                 Emulator.Instance.TurnPowerOff();
             }
+        }
+
+        private void GameboyForm_Load(object sender, EventArgs e)
+        {
+            DebugWindow debugWindow = new DebugWindow();
+            debugWindow.Show();
+            debugWindow.Location = new Point(this.Width, 0);
+
+            DebugTileViewer debugTileViewer = new DebugTileViewer();
+            debugTileViewer.Show();
+            debugTileViewer.Location = new Point(this.Width + debugWindow.Width, 0);
         }
     }
 }

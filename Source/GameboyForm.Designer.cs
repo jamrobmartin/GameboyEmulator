@@ -38,6 +38,8 @@
             debugToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             implementedInstructionsToolStripMenuItem = new ToolStripMenuItem();
+            testsToolStripMenuItem = new ToolStripMenuItem();
+            runToolStripMenuItem = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             tableLayoutPanel1 = new TableLayoutPanel();
             tableLayoutPanel2 = new TableLayoutPanel();
@@ -57,8 +59,6 @@
             button9 = new Button();
             button10 = new Button();
             button8 = new Button();
-            testsToolStripMenuItem = new ToolStripMenuItem();
-            runToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -139,6 +139,20 @@
             implementedInstructionsToolStripMenuItem.Size = new Size(210, 22);
             implementedInstructionsToolStripMenuItem.Text = "Implemented Instructions";
             implementedInstructionsToolStripMenuItem.Click += implementedInstructionsToolStripMenuItem_Click;
+            // 
+            // testsToolStripMenuItem
+            // 
+            testsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { runToolStripMenuItem });
+            testsToolStripMenuItem.Name = "testsToolStripMenuItem";
+            testsToolStripMenuItem.Size = new Size(44, 20);
+            testsToolStripMenuItem.Text = "Tests";
+            // 
+            // runToolStripMenuItem
+            // 
+            runToolStripMenuItem.Name = "runToolStripMenuItem";
+            runToolStripMenuItem.Size = new Size(112, 22);
+            runToolStripMenuItem.Text = "Run All";
+            runToolStripMenuItem.Click += runToolStripMenuItem_Click;
             // 
             // statusStrip1
             // 
@@ -427,20 +441,6 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
-            // testsToolStripMenuItem
-            // 
-            testsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { runToolStripMenuItem });
-            testsToolStripMenuItem.Name = "testsToolStripMenuItem";
-            testsToolStripMenuItem.Size = new Size(44, 20);
-            testsToolStripMenuItem.Text = "Tests";
-            // 
-            // runToolStripMenuItem
-            // 
-            runToolStripMenuItem.Name = "runToolStripMenuItem";
-            runToolStripMenuItem.Size = new Size(180, 22);
-            runToolStripMenuItem.Text = "Run All";
-            runToolStripMenuItem.Click += runToolStripMenuItem_Click;
-            // 
             // GameboyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -459,6 +459,7 @@
             StartPosition = FormStartPosition.Manual;
             Text = "Gameboy Emulator";
             FormClosing += GameboyForm_FormClosing;
+            Load += GameboyForm_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
             tableLayoutPanel1.ResumeLayout(false);
