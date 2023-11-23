@@ -18,6 +18,16 @@ namespace GameboyEmulator
         public static implicit operator bool(Byte custom) { return custom._value > 0; }
         public static implicit operator Byte(bool value) { return value ? new Byte(1) : new Byte(0); }
 
+        public void SetBit(int bit,  bool value)
+        {
+            // First clear the bit
+            Byte mask = ~(0b1 << bit);
+            _value &= (byte)mask;
+
+            // Then set it to value
+            mask = (value ? 1 : 0) << bit;
+            _value |= (byte)mask;
+        }
 
         public string ToHexString()
         {
@@ -48,7 +58,7 @@ namespace GameboyEmulator
 
     public class CustomValueType<TCustom, TValue>
     {
-        protected readonly TValue _value;
+        protected TValue _value;
 
         public CustomValueType(TValue value)
         {

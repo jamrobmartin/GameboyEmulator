@@ -122,6 +122,14 @@ namespace GameboyEmulator
             PixelDraw = 3
         }
 
+        public enum eInterrupt
+        {
+            HorizontalBlank,
+            VerticalBlank,
+            OAMScan,
+            LYCompare
+        }
+
         public eMode PPUMode 
         { 
             get
@@ -134,6 +142,13 @@ namespace GameboyEmulator
                 STAT &= 0b11111100;
                 STAT |= (byte)value;
             }
+        }
+
+        public bool CheckInterrupt(eInterrupt interrupt)
+        {
+            Byte interruptByte = 0b00001000 << (int)interrupt;
+
+            return STAT & interruptByte > 0;
         }
 
         public void Tick()
@@ -154,6 +169,21 @@ namespace GameboyEmulator
         public void IncrementLY()
         {
             LY++;
+
+            if(LY == LYC)
+            {
+                STAT.SetBit(2, true);
+
+                if(CheckInterrupt(eInterrupt.LYCompare))
+                {
+                    CPU.Instance.RequestInterupt(eInterruptType.LCD);
+                }
+
+            }
+            else
+            {
+                STAT.SetBit(2, false);
+            }
         }
 
         public void DoHorizontalBlank()
@@ -170,6 +200,13 @@ namespace GameboyEmulator
                 {
                     // Change to Vertical Blank mode
                     PPUMode = eMode.VerticalBlank;
+
+                    CPU.Instance.RequestInterupt(eInterruptType.VBlank);
+
+                    if(CheckInterrupt(eInterrupt.VerticalBlank))
+                    {
+                        CPU.Instance.RequestInterupt(eInterruptType.LCD);
+                    }
                 }
                 else
                 {
