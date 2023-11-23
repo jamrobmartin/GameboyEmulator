@@ -42,6 +42,7 @@ namespace GameboyEmulator
             // Init() Calls
             CPU.Instance.Init();
             Timer.Instance.Init();
+            PPU.Instance.Init();
 
             InstructionCount = 0;
 

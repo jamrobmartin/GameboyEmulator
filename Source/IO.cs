@@ -25,7 +25,7 @@ namespace GameboyEmulator
 
             if (address >= 0xFF0F && address <= 0xFF0F) { return CPU.Instance.IF; }
 
-            if (address >= 0xFF44 && address <= 0xFF44) { return LY++; }
+            if (address >= 0xFF40 && address <= 0xFF4B) { return PPU.Instance.Read(address); }
 
             //throw new Exception("IO - Tried to read memory location: " + address.ToHexString());
             return 0x00;
@@ -39,6 +39,8 @@ namespace GameboyEmulator
             if (address >= 0xFF04 && address <= 0xFF07) { Timer.Instance.Write(address, value); return; }
 
             if (address >= 0xFF0F && address <= 0xFF0F) { CPU.Instance.IF = value; return; }
+
+            if (address >= 0xFF40 && address <= 0xFF4B) { PPU.Instance.Write(address, value); return; }
 
             //throw new Exception("IO - Tried to Write memory location: " + address.ToHexString());
         }
