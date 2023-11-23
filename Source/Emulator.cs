@@ -87,6 +87,7 @@ namespace GameboyEmulator
                 {
                     Ticks++;
                     Timer.Instance.Tick();
+                    PPU.Instance.Tick();
                 }
             }
         }

@@ -53,7 +53,14 @@ namespace GameboyEmulator
             WY = 0;
             WX = 0;
 
+            LineTicks = 0;
 
+            PPUMode = eMode.OAMScan;
+
+            for (int i = 0; i < OAM.Length; i++)
+            {
+                OAM[i] = 0;
+            }
         }
 
         #region R/W
@@ -81,21 +88,136 @@ namespace GameboyEmulator
         {
             if (address >= 0xFE00 && address <= 0xFE9F) { OAM[address - 0xFE00] = value; return; }
 
-            if (address == 0xFF40) { LCDC = value; }
-            if (address == 0xFF41) { STAT = value; }
-            if (address == 0xFF42) { SCY  = value; }
-            if (address == 0xFF43) { SCX  = value; }
-            if (address == 0xFF44) { LY   = value; }
-            if (address == 0xFF45) { LYC  = value; }
-            if (address == 0xFF46) { DMA  = value; }
-            if (address == 0xFF47) { BGP  = value; }
-            if (address == 0xFF48) { OBP0 = value; }
-            if (address == 0xFF49) { OBP1 = value; }
-            if (address == 0xFF4A) { WY   = value; }
-            if (address == 0xFF4B) { WX   = value; }
+            if (address == 0xFF40) { LCDC = value; return;}
+            if (address == 0xFF41) { STAT = value; return;}
+            if (address == 0xFF42) { SCY  = value; return;}
+            if (address == 0xFF43) { SCX  = value; return;}
+            if (address == 0xFF44) { LY   = value; return;}
+            if (address == 0xFF45) { LYC  = value; return;}
+            if (address == 0xFF46) { DMA  = value; return;}
+            if (address == 0xFF47) { BGP  = value; return;}
+            if (address == 0xFF48) { OBP0 = value; return;}
+            if (address == 0xFF49) { OBP1 = value; return;}
+            if (address == 0xFF4A) { WY   = value; return;}
+            if (address == 0xFF4B) { WX   = value; return;}
 
             throw new Exception("PPU - Tried to Write memory location: " + address.ToHexString());
         }
+        #endregion
+
+        #region StateMachine
+
+        public const int LINES_PER_FRAME = 154;
+        public const int TICKS_PER_LINE = 456;
+        public const int YRES = 144;
+        public const int XRES = 160;
+
+        public UInt32 LineTicks = 0;
+
+        public enum eMode
+        {
+            HorizontalBlank = 0,
+            VerticalBlank = 1,
+            OAMScan = 2,
+            PixelDraw = 3
+        }
+
+        public eMode PPUMode 
+        { 
+            get
+            {
+                return (eMode)(STAT & 0b11);
+            }
+
+            set
+            {
+                STAT &= 0b11111100;
+                STAT |= (byte)value;
+            }
+        }
+
+        public void Tick()
+        {
+            LineTicks++;
+
+            switch (PPUMode)
+            {
+                case eMode.HorizontalBlank: DoHorizontalBlank(); break;
+                case eMode.VerticalBlank:   DoVerticalBlank(); break;
+                case eMode.OAMScan:         DoOAMScan(); break;
+                case eMode.PixelDraw:       DoPixelDraw(); break;
+                default:
+                    break;
+            }
+        }
+
+        public void IncrementLY()
+        {
+            LY++;
+        }
+
+        public void DoHorizontalBlank()
+        {
+            // If you have reached the end of the line
+            if(LineTicks >= TICKS_PER_LINE)
+            {
+                // Move to the next line
+                IncrementLY();
+                LineTicks = 0;
+
+                // If you have reached the bottom of the screen
+                if (LY >= YRES)
+                {
+                    // Change to Vertical Blank mode
+                    PPUMode = eMode.VerticalBlank;
+                }
+                else
+                {
+                    // We have more lines to render, 
+                    // Change to OAM Scan
+                    PPUMode = eMode.OAMScan;
+                }
+            }
+
+        }
+
+        public void DoVerticalBlank()
+        {
+            // If you have reached the end of the line
+            if (LineTicks >= TICKS_PER_LINE)
+            {
+                IncrementLY();
+                LineTicks = 0;
+
+                //If we have reached the bottom of the frame
+                if (LY >= LINES_PER_FRAME)
+                {
+                    // Go back to the top.
+                    LY = 0;
+                    PPUMode = eMode.OAMScan;
+                }
+            }
+        }
+
+        public void DoOAMScan()
+        {
+            // If you are done reading OAM
+            if (LineTicks >= 80)
+            {
+                // Move to Pixel Draw
+                PPUMode = eMode.PixelDraw;
+            }
+
+        }
+
+        public void DoPixelDraw()
+        {
+            // This length of this section of rendering will be depending on several factors
+            // For now, we will assume it does nothing and just move straight to the next mode
+
+            PPUMode = eMode.HorizontalBlank;
+        }
+
         #endregion
 
     }
