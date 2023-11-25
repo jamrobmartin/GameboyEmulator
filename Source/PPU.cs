@@ -15,6 +15,8 @@ namespace GameboyEmulator
 
         private Byte[] OAM = new Byte[160];
 
+        public Color[] VideoBuffer { get; set; } = new Color[YRES * XRES];
+
         #region Registers
         public Byte LCDC { get; set; } = 0; // 0xFF40
         public Byte STAT { get; set; } = 0; // 0xFF41
@@ -29,6 +31,125 @@ namespace GameboyEmulator
         public Byte WY { get; set; } = 0;   // 0xFFA
         public Byte WX { get; set; } = 0;   // 0xFFB
 
+        #endregion
+
+        #region LCDC
+
+        public bool LCDEnabled
+        {
+            get
+            {
+                return LCDC.GetBit(7);
+            }
+
+            set
+            {
+                LCDC.SetBit(7, value);
+            }
+        }
+
+        public bool WindowEnabled
+        {
+            get
+            {
+                return LCDC.GetBit(5);
+            }
+
+            set
+            {
+                LCDC.SetBit(5, value);
+            }
+        }
+
+        public bool ObjEnabled
+        {
+            get
+            {
+                return LCDC.GetBit(1);
+            }
+
+            set
+            {
+                LCDC.SetBit(1, value);
+            }
+        }
+
+        public bool BGandWindowEnabled
+        {
+            get
+            {
+                return LCDC.GetBit(0);
+            }
+
+            set
+            {
+                LCDC.SetBit(0, value);
+            }
+        }
+
+        public Word WindowTileMapArea
+        {
+            get
+            {
+                return LCDC.GetBit(6) ? 0x9C00 : 0x9800;
+            }
+        }
+
+        public Word BGandWindowTileDataArea
+        {
+            get
+            {
+                return LCDC.GetBit(4) ? 0x8000 : 0x8800;
+            }
+        }
+
+        public Word BGTileMapArea
+        {
+            get
+            {
+                return LCDC.GetBit(3) ? 0x9C00 : 0x9800;
+            }
+        }
+
+        public int OBJSize
+        {
+            get
+            {
+                return LCDC.GetBit(2) ? 16 : 8;
+            }
+        }
+
+        #endregion
+
+        #region Palettes
+        public Color[] DefaultColors { get; set; } = { Color.White, Color.FromArgb(255,170,170,170), Color.FromArgb(255, 85, 85, 85), Color.Black };
+
+        public Color[] BGColors { get; set; } = { Color.White, Color.LightGray, Color.DarkGray, Color.Black };
+        public Color[] SP1Colors { get; set; } = { Color.White, Color.LightGray, Color.DarkGray, Color.Black };
+        public Color[] SP2Colors { get; set; } = { Color.White, Color.LightGray, Color.DarkGray, Color.Black };
+
+        public void UpdatePalette(Byte data, int palette)
+        {
+            Color[] colors = new Color[4];
+
+            colors[0] = DefaultColors[(data >> 0) & 0b11];
+            colors[1] = DefaultColors[(data >> 2) & 0b11];
+            colors[2] = DefaultColors[(data >> 4) & 0b11];
+            colors[3] = DefaultColors[(data >> 6) & 0b11];
+
+            for (int i = 0; i < 4; i++)
+            {
+
+                switch (palette)
+                {
+                    case 1: BGColors[i] = colors[i]; break;
+                    case 2: SP1Colors[i] = colors[i]; break;
+                    case 3: SP2Colors[i] = colors[i]; break;
+                    default:
+                        break;
+                }
+            }
+        }
         #endregion
 
         public PPU()
@@ -60,6 +181,11 @@ namespace GameboyEmulator
             for (int i = 0; i < OAM.Length; i++)
             {
                 OAM[i] = 0;
+            }
+
+            for (int i = 0; i < VideoBuffer.Length; i++)
+            {
+                VideoBuffer[i] = Color.White;
             }
         }
 
@@ -95,9 +221,9 @@ namespace GameboyEmulator
             if (address == 0xFF44) { LY   = value; return;}
             if (address == 0xFF45) { LYC  = value; return;}
             if (address == 0xFF46) { DMA  = value; return;}
-            if (address == 0xFF47) { BGP  = value; return;}
-            if (address == 0xFF48) { OBP0 = value; return;}
-            if (address == 0xFF49) { OBP1 = value; return;}
+            if (address == 0xFF47) { BGP  = value; UpdatePalette(value, 1); return;}
+            if (address == 0xFF48) { OBP0 = value; UpdatePalette(value & 0b11111100, 2); return;}
+            if (address == 0xFF49) { OBP1 = value; UpdatePalette(value & 0b11111100, 3); return;}
             if (address == 0xFF4A) { WY   = value; return;}
             if (address == 0xFF4B) { WX   = value; return;}
 
@@ -243,7 +369,17 @@ namespace GameboyEmulator
             {
                 // Move to Pixel Draw
                 PPUMode = eMode.PixelDraw;
+
+                FetchState = eFetchState.Tile;
+                LineX = 0;
+                FetchX = 0;
+                PushedX = 0;
+                
             }
+
+            // If this is the first tick,
+            // go ahead and pull in OAM data
+            // NOT IMPLEMENTED FOR NOW
 
         }
 
@@ -252,7 +388,231 @@ namespace GameboyEmulator
             // This length of this section of rendering will be depending on several factors
             // For now, we will assume it does nothing and just move straight to the next mode
 
-            PPUMode = eMode.HorizontalBlank;
+            ProcessPipeline();
+
+            // Keep in this state until we push a whole row of pixels.
+
+            if(PushedX >= XRES)
+            {
+                BackgroundPixelFIFO.Reset();
+                
+                PPUMode = eMode.HorizontalBlank;
+
+                if(CheckInterrupt(eInterrupt.HorizontalBlank))
+                {
+                    CPU.Instance.RequestInterupt(eInterruptType.LCD);
+                }
+            }
+
+            
+        }
+
+        #endregion
+
+        #region PixelFIFO
+
+        public class PixelFIFOEntry
+        {
+            public PixelFIFOEntry? Next = null;
+            public Color Value = Color.Transparent;
+
+            public PixelFIFOEntry()
+            {
+
+            }
+
+            public PixelFIFOEntry(Color color)
+            {
+                Value = color;
+            }
+        }
+
+        public class PixelFIFO
+        {
+            public PixelFIFOEntry? Head = null;
+            public PixelFIFOEntry? Tail = null;
+            public int Size = 0;
+
+            public void Push(Color color)
+            {
+                PixelFIFOEntry next = new PixelFIFOEntry(color);
+
+
+                if (Head == null)
+                {
+                    Head = next;
+                    Tail = next;
+                }
+                else
+                {
+                    Tail.Next = next;
+                    Tail = next;
+                }
+
+                Size++;
+            }
+
+            public Color Pop()
+            {
+                Color popped = Head.Value;
+                Head = Head.Next;
+                Size--;
+
+                return popped;
+            }
+
+            public void Reset()
+            {
+                while (Size > 0)
+                    Pop();
+
+
+            }
+        }
+
+        public PixelFIFO BackgroundPixelFIFO = new PixelFIFO();
+
+        #endregion
+
+        #region Pixel Fetcher
+
+        public enum eFetchState
+        {
+            Tile,
+            Data0,
+            Data1,
+            Sleep,
+            Push
+        }
+
+        public eFetchState FetchState { get; set; } = eFetchState.Tile;
+
+        public Byte MapY { get; set; } = 0;
+        public Byte MapX { get; set; } = 0;
+        public Byte TileY { get; set; } = 0;
+
+        public Byte FetchX { get; set; } = 0;
+        public Byte LineX { get; set; } = 0;
+        public Byte PushedX { get; set; } = 0;
+
+        public Byte[] BGFetchData { get; set; } = { 0, 0, 0 };
+
+        public void ProcessPipeline()
+        {
+            MapY = LY + SCY;
+            MapX = FetchX + SCX;
+            TileY = ((LY + SCY) % 8) * 2;
+
+            if ((LineTicks & 0b1) == 0)
+            {
+                PipelineFetch();
+            }
+
+            PipelinePushPixel();
+        }
+
+        public void PipelineFetch()
+        {
+            switch (FetchState)
+            {
+                case eFetchState.Tile:  ExecutePipelineFetchTile();  break;
+                case eFetchState.Data0: ExecutePipelineFetchData0(); break;
+                case eFetchState.Data1: ExecutePipelineFetchData1(); break;
+                case eFetchState.Sleep: ExecutePipelineFetchSleep(); break;
+                case eFetchState.Push:  ExecutePipelineFetchPush();  break;
+                default:
+                    break;
+            }
+        }
+
+        public void ExecutePipelineFetchTile()
+        {
+            if(BGandWindowEnabled)
+            {
+                BGFetchData[0] = Bus.Read(BGTileMapArea + (MapX / 8) + ((MapY / 8) * 32));
+
+                if (BGandWindowTileDataArea == 0x8800)
+                {
+                    BGFetchData[0] += 128;
+                }
+            }
+
+            FetchState = eFetchState.Data0;
+            FetchX += 8;
+        }
+
+        public void ExecutePipelineFetchData0()
+        {
+            BGFetchData[1] = Bus.Read(BGandWindowTileDataArea + (BGFetchData[0] * 16) + TileY);
+            FetchState = eFetchState.Data1;
+        }
+
+        public void ExecutePipelineFetchData1()
+        {
+            BGFetchData[2] = Bus.Read(BGandWindowTileDataArea + (BGFetchData[0] * 16) + TileY + 1);
+            FetchState = eFetchState.Sleep;
+        }
+
+        public void ExecutePipelineFetchSleep()
+        {
+            FetchState = eFetchState.Push;
+        }
+
+        public void ExecutePipelineFetchPush()
+        {
+            if(PipelineAdd())
+            {
+                FetchState = eFetchState.Tile;
+            }
+        }
+
+        public bool PipelineAdd()
+        {
+            // First check if FIFO is full
+            if(BackgroundPixelFIFO.Size > 8)
+            {
+                return false;
+            }
+
+            int x = FetchX - (8 - (SCX % 8));
+
+            if(x >= 0)
+            {
+                for(int i = 0; i < 8; i++)
+                {
+                    int bit = 7 - i;
+
+                    bool hiSet = BGFetchData[1].GetBit(bit);
+                    bool loSet = BGFetchData[2].GetBit(bit);
+
+
+                    Byte hi = (Byte)hiSet;
+                    Byte lo = (Byte)loSet << 1;
+
+                    Color color = BGColors[hi | lo];
+
+                    BackgroundPixelFIFO.Push(color);
+                }
+            }
+
+            return true;
+        }
+
+        public void PipelinePushPixel()
+        {
+            if(BackgroundPixelFIFO.Size > 8)
+            {
+                Color color = BackgroundPixelFIFO.Pop();
+
+                if(LineX >= (SCX % 8))
+                {
+                    VideoBuffer[PushedX + (LY * XRES)] = color;
+
+                    PushedX++;
+                }
+
+                LineX++;
+            }
         }
 
         #endregion

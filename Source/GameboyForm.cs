@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text;
 using System.Windows.Forms;
+using System.Xml;
 
 namespace GameboyEmulator
 {
@@ -19,6 +20,17 @@ namespace GameboyEmulator
             ButtonPressed += GameboyForm_ButtonPressed;
             ButtonPressed += Emulator.Instance.GameboyForm_ButtonPressed;
 
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Interval = 250;
+            timer.Elapsed += Timer_Elapsed;
+            timer.AutoReset = true;
+            timer.Enabled = true;
+
+        }
+
+        private void Timer_Elapsed(object? sender, System.Timers.ElapsedEventArgs e)
+        {
+            pictureBox1.Invalidate();
         }
 
         private void GameboyForm_ButtonPressed(object sender, ButtonPressedEventArgs e)
@@ -194,6 +206,38 @@ namespace GameboyEmulator
             DebugTileViewer debugTileViewer = new DebugTileViewer();
             debugTileViewer.Show();
             debugTileViewer.Location = new Point(this.Width + debugWindow.Width, 0);
+        }
+
+        private void pictureBox1_Paint(object sender, PaintEventArgs e)
+        {
+            DrawScreen(e.Graphics);
+        }
+
+        private void DrawScreen(Graphics g)
+        {
+            const int YRES = 144;
+            const int XRES = 160;
+            const int Scale = 3;
+
+            Rectangle rect = new Rectangle(0, 0, XRES * Scale, YRES * Scale);
+
+            g.FillRectangle(Brushes.White, rect);
+
+
+
+            for (int lineNumber = 0; lineNumber < YRES; lineNumber++)
+            {
+                for (int x = 0; x < XRES; x++)
+                {
+                    rect.X = x * Scale;
+                    rect.Y = lineNumber * Scale;
+                    rect.Width = Scale;
+                    rect.Height = Scale;
+
+                    g.FillRectangle(new SolidBrush(PPU.Instance.VideoBuffer[x + lineNumber * XRES]), rect);
+
+                }
+            }
         }
     }
 }

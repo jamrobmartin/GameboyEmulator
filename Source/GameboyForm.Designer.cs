@@ -46,7 +46,7 @@
             tableLayoutPanel4 = new TableLayoutPanel();
             panel1 = new Panel();
             panel2 = new Panel();
-            panel3 = new Panel();
+            pictureBox1 = new PictureBox();
             tableLayoutPanel3 = new TableLayoutPanel();
             button1 = new Button();
             button2 = new Button();
@@ -64,6 +64,7 @@
             tableLayoutPanel2.SuspendLayout();
             tableLayoutPanel4.SuspendLayout();
             panel2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).BeginInit();
             tableLayoutPanel3.SuspendLayout();
             tableLayoutPanel5.SuspendLayout();
             SuspendLayout();
@@ -224,20 +225,22 @@
             // panel2
             // 
             panel2.BackColor = Color.Black;
-            panel2.Controls.Add(panel3);
+            panel2.Controls.Add(pictureBox1);
             panel2.Dock = DockStyle.Fill;
             panel2.Location = new Point(43, 3);
             panel2.Name = "panel2";
             panel2.Size = new Size(486, 439);
             panel2.TabIndex = 1;
             // 
-            // panel3
+            // pictureBox1
             // 
-            panel3.BackColor = Color.White;
-            panel3.Location = new Point(3, 3);
-            panel3.Name = "panel3";
-            panel3.Size = new Size(480, 432);
-            panel3.TabIndex = 0;
+            pictureBox1.BackColor = Color.White;
+            pictureBox1.Location = new Point(3, 3);
+            pictureBox1.Name = "pictureBox1";
+            pictureBox1.Size = new Size(480, 432);
+            pictureBox1.TabIndex = 0;
+            pictureBox1.TabStop = false;
+            pictureBox1.Paint += pictureBox1_Paint;
             // 
             // tableLayoutPanel3
             // 
@@ -466,6 +469,7 @@
             tableLayoutPanel2.ResumeLayout(false);
             tableLayoutPanel4.ResumeLayout(false);
             panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)pictureBox1).EndInit();
             tableLayoutPanel3.ResumeLayout(false);
             tableLayoutPanel5.ResumeLayout(false);
             ResumeLayout(false);
@@ -494,7 +498,6 @@
         private Button button9;
         private Button button10;
         private Panel panel2;
-        private Panel panel3;
         private ToolStripMenuItem insertROMToolStripMenuItem;
         private ToolStripMenuItem loggerToolStripMenuItem;
         private ToolStripMenuItem setLevelToolStripMenuItem;
@@ -505,5 +508,6 @@
         private ToolStripMenuItem implementedInstructionsToolStripMenuItem;
         private ToolStripMenuItem testsToolStripMenuItem;
         private ToolStripMenuItem runToolStripMenuItem;
+        private PictureBox pictureBox1;
     }
 }

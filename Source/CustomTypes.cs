@@ -29,6 +29,11 @@ namespace GameboyEmulator
             _value |= (byte)mask;
         }
 
+        public bool GetBit(int bit)
+        {
+            return ((_value >> bit) & 1) > 0;
+        }
+
         public string ToHexString()
         {
             StringBuilder sb = new StringBuilder();
