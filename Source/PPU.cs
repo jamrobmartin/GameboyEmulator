@@ -220,7 +220,7 @@ namespace GameboyEmulator
             if (address == 0xFF43) { SCX  = value; return;}
             if (address == 0xFF44) { LY   = value; return;}
             if (address == 0xFF45) { LYC  = value; return;}
-            if (address == 0xFF46) { DMA  = value; return;}
+            if (address == 0xFF46) { DMA  = value; DMAStart(value); return;}
             if (address == 0xFF47) { BGP  = value; UpdatePalette(value, 1); return;}
             if (address == 0xFF48) { OBP0 = value; UpdatePalette(value & 0b11111100, 2); return;}
             if (address == 0xFF49) { OBP1 = value; UpdatePalette(value & 0b11111100, 3); return;}
@@ -613,6 +613,52 @@ namespace GameboyEmulator
 
                 LineX++;
             }
+        }
+
+        #endregion
+
+        #region DMA
+
+        public bool Active { get; set; } = false;
+        public Byte CurrentByte { get; set; } = 0;
+
+        public Byte Value { get; set; } = 0;
+
+        public Byte StartDelay { get; set; } = 0;
+
+        public void DMAStart(Byte startValue)
+        {
+            Active = true;
+            CurrentByte = 0;
+            Value = startValue;
+            StartDelay = 2;
+        }
+
+        public void DMACycle()
+        {
+            if (!Active)
+            {
+                return;
+            }
+
+            if (StartDelay > 0)
+            {
+                StartDelay--;
+                return;
+            }
+
+            Word readAddress = (Value * 0x100) + CurrentByte;
+            Byte writeByte = Bus.Read(readAddress);
+            Word writeAddress = 0xFE00 + CurrentByte;
+            Bus.Write(writeAddress, writeByte);
+
+            CurrentByte++;
+
+            if (CurrentByte == 0xA0)
+            {
+                Active = false;
+            }
+
         }
 
         #endregion

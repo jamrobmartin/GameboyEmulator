@@ -89,6 +89,9 @@ namespace GameboyEmulator
                     Timer.Instance.Tick();
                     PPU.Instance.Tick();
                 }
+
+                // DMA cycle only happens once per cycle, not once per tick
+                PPU.Instance.DMACycle();
             }
         }
         #endregion
