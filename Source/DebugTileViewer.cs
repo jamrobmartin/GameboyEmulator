@@ -15,7 +15,7 @@ namespace GameboyEmulator
     {
         private int ZoomScale = 3;
 
-        Brush[] brushes = { Brushes.Transparent, Brushes.LightGray, Brushes.DarkGray, Brushes.Black };
+        Color[] Colors = { Color.White, Color.FromArgb(255, 170, 170, 170), Color.FromArgb(255, 85, 85, 85), Color.Black };
 
         public DebugTileViewer()
         {
@@ -61,8 +61,12 @@ namespace GameboyEmulator
 
                 for (int bit = 7; bit >= 0; bit--)
                 {
-                    Byte hi = (b1 & (1 << bit)) >> (bit - 1);
-                    Byte lo = (b2 & (1 << bit)) >> (bit);
+                    bool hiSet = b1.GetBit(bit);
+                    bool loSet = b2.GetBit(bit);
+
+
+                    Byte hi = (Byte)hiSet;
+                    Byte lo = (Byte)loSet << 1;
 
                     Byte color = hi | lo;
 
@@ -71,7 +75,7 @@ namespace GameboyEmulator
                     rc.Width = ZoomScale;
                     rc.Height = ZoomScale;
 
-                    g.FillRectangle(brushes[color], rc);
+                    g.FillRectangle(new SolidBrush(Colors[color]), rc);
 
                 }
             }
