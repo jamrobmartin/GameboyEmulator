@@ -112,6 +112,7 @@ namespace GameboyEmulator
         public eConditionType ConditionType = eConditionType.None;
         public Byte Parameter = 0;
         public Byte Parameter2 = 0;
+        public bool ConditionMet = false;
 
         public bool DestinationIsMemory { get; set; } = false;
         public Word DestinationAddress { get; set; } = 0;

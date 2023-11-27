@@ -239,5 +239,58 @@ namespace GameboyEmulator
                 }
             }
         }
+
+        private void printCycleCountsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("Counts:");
+            sb.AppendLine("Normal Instructions");
+
+            int ElementWritten = 0;
+            for (int i = 0; i <= 0xFF; i++)
+            {
+                sb.Append(Emulator.Instance.OpCodeCycleDurations[i] + " ");
+                ElementWritten++;
+
+                if(ElementWritten == 0x10)
+                {
+                    sb.AppendLine();
+                    ElementWritten = 0;
+                }
+            }
+
+            sb.AppendLine("Conditional Instructions");
+
+            ElementWritten = 0;
+            for (int i = 0; i <= 0xFF; i++)
+            {
+                sb.Append(Emulator.Instance.OpCodeConditionalCycleDurations[i] + " ");
+                ElementWritten++;
+
+                if (ElementWritten == 0x10)
+                {
+                    sb.AppendLine();
+                    ElementWritten = 0;
+                }
+            }
+
+            sb.AppendLine("CB Instructions");
+
+            ElementWritten = 0;
+            for (int i = 0; i <= 0xFF; i++)
+            {
+                sb.Append(Emulator.Instance.OpCodeCBCycleDurations[i] + " ");
+                ElementWritten++;
+
+                if (ElementWritten == 0x10)
+                {
+                    sb.AppendLine();
+                    ElementWritten = 0;
+                }
+            }
+
+            Logger.WriteLine(sb.ToString(), Logger.LogLevel.Information);
+        }
     }
 }

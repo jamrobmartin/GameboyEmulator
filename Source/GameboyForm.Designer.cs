@@ -59,6 +59,8 @@
             button9 = new Button();
             button10 = new Button();
             button8 = new Button();
+            toolStripSeparator1 = new ToolStripSeparator();
+            printCycleCountsToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             tableLayoutPanel1.SuspendLayout();
             tableLayoutPanel2.SuspendLayout();
@@ -143,7 +145,7 @@
             // 
             // testsToolStripMenuItem
             // 
-            testsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { runToolStripMenuItem });
+            testsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { runToolStripMenuItem, toolStripSeparator1, printCycleCountsToolStripMenuItem });
             testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             testsToolStripMenuItem.Size = new Size(44, 20);
             testsToolStripMenuItem.Text = "Tests";
@@ -151,7 +153,7 @@
             // runToolStripMenuItem
             // 
             runToolStripMenuItem.Name = "runToolStripMenuItem";
-            runToolStripMenuItem.Size = new Size(112, 22);
+            runToolStripMenuItem.Size = new Size(180, 22);
             runToolStripMenuItem.Text = "Run All";
             runToolStripMenuItem.Click += runToolStripMenuItem_Click;
             // 
@@ -444,6 +446,18 @@
             button8.UseVisualStyleBackColor = false;
             button8.Click += button8_Click;
             // 
+            // toolStripSeparator1
+            // 
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(177, 6);
+            // 
+            // printCycleCountsToolStripMenuItem
+            // 
+            printCycleCountsToolStripMenuItem.Name = "printCycleCountsToolStripMenuItem";
+            printCycleCountsToolStripMenuItem.Size = new Size(180, 22);
+            printCycleCountsToolStripMenuItem.Text = "Print Cycle Counts";
+            printCycleCountsToolStripMenuItem.Click += printCycleCountsToolStripMenuItem_Click;
+            // 
             // GameboyForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -509,5 +523,7 @@
         private ToolStripMenuItem testsToolStripMenuItem;
         private ToolStripMenuItem runToolStripMenuItem;
         private PictureBox pictureBox1;
+        private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem printCycleCountsToolStripMenuItem;
     }
 }

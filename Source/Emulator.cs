@@ -13,7 +13,24 @@ namespace GameboyEmulator
         public static Emulator Instance { get; private set; } = lazy.Value;
         #endregion
 
-        public Emulator() { }
+        public Emulator() 
+        { 
+            for (int i = 0; i < OpCodeCycleDurations.Length; i++)
+            {
+                OpCodeCycleDurations[i] = 0;
+            }
+
+            for (int i = 0; i < OpCodeConditionalCycleDurations.Length; i++)
+            {
+                OpCodeConditionalCycleDurations[i] = 0;
+            }
+
+            for (int i = 0; i < OpCodeCBCycleDurations.Length; i++)
+            {
+                OpCodeCBCycleDurations[i] = 0;
+            }
+
+        }
 
         public bool PoweredOn { get; set; } = false;
 
@@ -79,6 +96,10 @@ namespace GameboyEmulator
         #endregion
 
         #region Cycle
+        public int[] OpCodeCycleDurations = new int[0xFF + 1];
+        public int[] OpCodeConditionalCycleDurations = new int[0xFF + 1];
+        public int[] OpCodeCBCycleDurations = new int[0xFF + 1];
+
         public int QueuedCycles { get; set; } = 0;
         public void QueueCycles(int cycles)
         {
@@ -87,6 +108,40 @@ namespace GameboyEmulator
 
         public void ExecuteCycles()
         {
+            // Record Cycle durations
+            Instruction instruction = CPU.Instance.Instruction;
+            int position = 0;
+            int value = QueuedCycles;
+
+            if(instruction.OpCode == 0xCB)
+            {
+                position = instruction.Parameter;
+                OpCodeCBCycleDurations[position] = value;
+            }
+            else
+            if(instruction.ConditionType != eConditionType.None)
+            {
+                position = instruction.OpCode;
+                if(!instruction.ConditionMet)
+                {
+                    OpCodeCycleDurations[position] = value;
+                }
+                else
+                {
+                    OpCodeConditionalCycleDurations[position] = value;
+                }
+                
+            }
+            else
+            {
+                
+                position = instruction.OpCode;
+
+                // Write all non-conditional instructions to both
+                OpCodeCycleDurations[position] = value;
+                OpCodeConditionalCycleDurations[position] = value;
+            }
+
             DoCycles(QueuedCycles);
 
             QueuedCycles = 0;

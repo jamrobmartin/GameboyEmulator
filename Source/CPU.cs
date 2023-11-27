@@ -735,6 +735,13 @@ namespace GameboyEmulator
             if (Instruction.AddressingMode == eAddressingMode.Register_Register)
             {
                 SetRegister(Instruction.Register1, GetRegister(Instruction.Register2));
+
+                // If 0xF9, need an extra cycle
+                if(Instruction.Register1 == eRegisterType.SP)
+                {
+                    Emulator.Instance.QueueCycles(1);
+                }
+
             }
 
             // If loading a register directly with a value
@@ -828,6 +835,9 @@ namespace GameboyEmulator
 
                 SetFlags(0,0,hflag, Cflag);
                 SetRegister(eRegisterType.HL, GetRegister(Instruction.Register2) + (sbyte)Instruction.Parameter);
+
+                // Extra cycle when writing to 2-Byte register
+                Emulator.Instance.QueueCycles(1);
             }
 
         }
@@ -871,6 +881,9 @@ namespace GameboyEmulator
                     break;
             }
 
+            if (proceed)
+                Instruction.ConditionMet = true;
+
             return proceed;
         }
 
@@ -885,9 +898,8 @@ namespace GameboyEmulator
                 else
                 {
                     SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
+                    Emulator.Instance.QueueCycles(1);
                 }
-                
-                Emulator.Instance.QueueCycles(1);
             }
         }
 
@@ -926,6 +938,12 @@ namespace GameboyEmulator
 
                 Emulator.Instance.QueueCycles(1);
             }
+
+            if(Instruction.ConditionType != eConditionType.None)
+            {
+                // Need an extra cycle for these for some reason
+                Emulator.Instance.QueueCycles(1);
+            }
         }
 
         public void ExecuteInstructionRETI()
@@ -960,6 +978,9 @@ namespace GameboyEmulator
 
                 SetRegister(eRegisterType.SP, result);
                 SetFlags(zFlag, 0, hFlag, cFlag);
+
+                // Extra 2 cycles when writing to 2-Byte register
+                Emulator.Instance.QueueCycles(2);
             }
             else
             if(Instruction.AddressingMode == eAddressingMode.Register_Register && Instruction.Register1 >= eRegisterType.AF)
@@ -975,6 +996,9 @@ namespace GameboyEmulator
 
                 SetRegister(Instruction.Register1, result & 0xFFFF);
                 SetFlags(-1, 0, hFlag, cFlag);
+
+                // Extra cycle when writing to 2-Byte register
+                Emulator.Instance.QueueCycles(1);
             }
             else
             {
