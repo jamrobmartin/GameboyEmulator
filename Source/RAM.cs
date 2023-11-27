@@ -40,6 +40,24 @@ namespace GameboyEmulator
             }
         }
 
+        public void Init()
+        {
+            for (int i = 0; i < VRAM.Length; i++)
+            {
+                VRAM[i] = 0;
+            }
+
+            for (int i = 0; i < WRAM.Length; i++)
+            {
+                WRAM[i] = 0;
+            }
+
+            for (int i = 0; i < HRAM.Length; i++)
+            {
+                HRAM[i] = 0;
+            }
+        }
+
         public Byte Read(Word address)
         {
             if (address >= 0x8000 && address <= 0x9FFF) { return VRAM[address - 0x8000]; }

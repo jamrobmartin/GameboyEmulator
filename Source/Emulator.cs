@@ -40,6 +40,7 @@ namespace GameboyEmulator
         public void ThreadLoop()
         {
             // Init() Calls
+            RAM.Instance.Init();
             CPU.Instance.Init();
             Timer.Instance.Init();
             PPU.Instance.Init();
