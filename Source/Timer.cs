@@ -33,7 +33,7 @@ namespace GameboyEmulator
             TAC = 0;
         }
 
-        public void Tick()
+        public void DoCycles(int T_Cycles)
         {
             Word prev_div = DIV;
 
@@ -60,6 +60,9 @@ namespace GameboyEmulator
                     CPU.Instance.RequestInterupt(eInterruptType.Timer);
                 }
             }
+
+            if (T_Cycles >= 2)
+                DoCycles(T_Cycles - 1);
         }
 
         public Byte Read(Word address)

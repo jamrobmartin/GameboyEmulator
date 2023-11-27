@@ -277,7 +277,7 @@ namespace GameboyEmulator
             return STAT & interruptByte > 0;
         }
 
-        public void Tick()
+        public void DoCycles(int T_Cycles)
         {
             LineTicks++;
 
@@ -289,6 +289,11 @@ namespace GameboyEmulator
                 case eMode.PixelDraw:       DoPixelDraw(); break;
                 default:
                     break;
+            }
+
+            if(T_Cycles >= 2)
+            {
+                DoCycles(T_Cycles-1);
             }
         }
 

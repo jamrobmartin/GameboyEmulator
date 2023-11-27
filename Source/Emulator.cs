@@ -78,20 +78,33 @@ namespace GameboyEmulator
         #endregion
 
         #region Cycle
-        public void DoCycles(int cycles)
+        public int QueuedCycles { get; set; } = 0;
+        public void QueueCycles(int cycles)
         {
-            for (int i = 0; i < cycles; i++)
-            {
-                // Each cycle does 4 ticks
-                for(int j = 0; j < 4; j++)
-                {
-                    Ticks++;
-                    Timer.Instance.Tick();
-                    PPU.Instance.Tick();
-                }
+            QueuedCycles += cycles;
+        }
 
-                // DMA cycle only happens once per cycle, not once per tick
+        public void ExecuteCycles()
+        {
+            DoCycles(QueuedCycles);
+
+            QueuedCycles = 0;
+        }
+
+        public void DoCycles(int M_Cycles)
+        {
+            // Here, a cycle represents a Machine(M) Cycle. 
+            // On the Gameboy, one M Cycle contains 4 Time (T) Cycles
+            // 1 M Cycle = 4 T Cycles
+            int remainingM_Cycles = M_Cycles;
+
+            while (remainingM_Cycles > 0)
+            {
+                Timer.Instance.DoCycles(4);
+                PPU.Instance.DoCycles(4);
                 PPU.Instance.DMACycle();
+
+                remainingM_Cycles--;
             }
         }
         #endregion

@@ -444,14 +444,15 @@ namespace GameboyEmulator
             }
             else
             {
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
                 if(IF)
                 {
                     Halted = false;
                 }
                 
             }
-            
+
+            Emulator.Instance.ExecuteCycles();
 
             if(InterruptMasterEnabled)
             {
@@ -470,7 +471,7 @@ namespace GameboyEmulator
             InstructionAddress = PC;
             InstructionRegister = Bus.Read(PC++);
             Instruction = new Instruction(InstructionRegister);
-            Emulator.Instance.DoCycles(1);
+            Emulator.Instance.QueueCycles(1);
 
         }
 
@@ -480,58 +481,58 @@ namespace GameboyEmulator
             {
                 case eAddressingMode.Register_D8:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.MemoryRegister_D8:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.Register_A16:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     Instruction.Parameter2 = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.A16_Register:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     Instruction.Parameter2 = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
 
                 case eAddressingMode.A8_Register:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.Register_A8:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.Register_D16:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     Instruction.Parameter2 = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.Register_R8:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
                 case eAddressingMode.HL_SPR:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
 
                 case eAddressingMode.D16:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     Instruction.Parameter2 = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
 
                 case eAddressingMode.D8:
                     Instruction.Parameter = Bus.Read(PC++);
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                     break;
 
                 default:
@@ -754,14 +755,14 @@ namespace GameboyEmulator
             {
                 Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
                 HL++;
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
             else
             if (Instruction.AddressingMode == eAddressingMode.HLD_Register)
             {
                 Bus.Write(Instruction.DestinationAddress, GetRegister(Instruction.Register2) & 0xFF);
                 HL--;
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
 
             // If loading from autoincrement or autodecrement
@@ -770,14 +771,14 @@ namespace GameboyEmulator
             {
                 SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
                 HL++;
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
             else
             if (Instruction.AddressingMode == eAddressingMode.Register_HLD)
             {
                 SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
                 HL--;
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
 
             // If we are loading to a memory location
@@ -791,7 +792,7 @@ namespace GameboyEmulator
                     if(Instruction.Register2 >= eRegisterType.AF)
                     {
                         Bus.Write16(Instruction.DestinationAddress, GetRegister(Instruction.Register2));
-                        Emulator.Instance.DoCycles(1);
+                        Emulator.Instance.QueueCycles(1);
                     }
                     else
                     {
@@ -804,7 +805,7 @@ namespace GameboyEmulator
                     Bus.Write(Instruction.DestinationAddress, Instruction.Parameter);
                 }
 
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
 
             }
 
@@ -814,7 +815,7 @@ namespace GameboyEmulator
             {
                 // We are loading to a register
                 SetRegister(Instruction.Register1, Bus.Read(Instruction.SourceAddress));
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
 
             // If this is the special case 0xF8, HL_SPR
@@ -843,7 +844,7 @@ namespace GameboyEmulator
                 Bus.Write(Instruction.DestinationAddress, A);
             }
 
-            Emulator.Instance.DoCycles(1);
+            Emulator.Instance.QueueCycles(1);
         }
 
         private bool CheckCondition()
@@ -886,7 +887,7 @@ namespace GameboyEmulator
                     SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
                 }
                 
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
         }
 
@@ -896,7 +897,7 @@ namespace GameboyEmulator
             {
                 SetRegister(eRegisterType.PC, GetRegister(eRegisterType.PC) + (sbyte)Instruction.Parameter );
 
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
         }
 
@@ -906,11 +907,11 @@ namespace GameboyEmulator
             if (CheckCondition())
             {
                 Push16(PC);
-                Emulator.Instance.DoCycles(2);
+                Emulator.Instance.QueueCycles(2);
 
                 SetRegister(eRegisterType.PC, Instruction.Parameter | (Instruction.Parameter2 << 8));
 
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
         }
 
@@ -919,11 +920,11 @@ namespace GameboyEmulator
             if (CheckCondition())
             {
                 Word value = Pop16();
-                Emulator.Instance.DoCycles(2);
+                Emulator.Instance.QueueCycles(2);
 
                 SetRegister(eRegisterType.PC, value);
 
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
             }
         }
 
@@ -989,7 +990,7 @@ namespace GameboyEmulator
 
                 if(Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1026,7 +1027,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1059,7 +1060,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1096,7 +1097,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1125,7 +1126,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1154,7 +1155,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1183,7 +1184,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1216,7 +1217,7 @@ namespace GameboyEmulator
 
                 if (Instruction.Register2 == eRegisterType.HL)
                 {
-                    Emulator.Instance.DoCycles(1);
+                    Emulator.Instance.QueueCycles(1);
                 }
             }
         }
@@ -1247,12 +1248,12 @@ namespace GameboyEmulator
             Byte regVal = GetRegister8(reg);
 
             // Always do one cycle
-            Emulator.Instance.DoCycles(1);
+            Emulator.Instance.QueueCycles(1);
 
             // If you had to read HL from Memory, do two cycles
             if(reg == eRegisterType.HL)
             {
-                Emulator.Instance.DoCycles(2);
+                Emulator.Instance.QueueCycles(2);
             }
 
             // Now execute the command
@@ -1392,7 +1393,7 @@ namespace GameboyEmulator
                 Byte value = (Bus.Read(GetRegister(eRegisterType.HL)) + 1) & 0xFF;
                 Bus.Write(GetRegister(eRegisterType.HL), value);
                 SetFlags(value == 0, 0, (value & 0x0F) == 0, -1);
-                Emulator.Instance.DoCycles(2);
+                Emulator.Instance.QueueCycles(2);
                 return;
             }
 
@@ -1401,7 +1402,7 @@ namespace GameboyEmulator
             {
                 Word value = GetRegister(Instruction.Register1) + 1;
                 SetRegister(Instruction.Register1, value);
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
                 return;
             }
         }
@@ -1424,7 +1425,7 @@ namespace GameboyEmulator
                 Byte value = (Bus.Read(GetRegister(eRegisterType.HL)) - 1) & 0xFF;
                 Bus.Write(GetRegister(eRegisterType.HL), value);
                 SetFlags(value == 0, 1, (value & 0x0F) == 0x0F, -1);
-                Emulator.Instance.DoCycles(2);
+                Emulator.Instance.QueueCycles(2);
                 return;
             }
 
@@ -1433,7 +1434,7 @@ namespace GameboyEmulator
             {
                 Word value = GetRegister(Instruction.Register1) - 1;
                 SetRegister(Instruction.Register1, value);
-                Emulator.Instance.DoCycles(1);
+                Emulator.Instance.QueueCycles(1);
                 return;
             }
         }
@@ -1460,7 +1461,7 @@ namespace GameboyEmulator
 
             SetRegister(Instruction.Register1, value);
             
-            Emulator.Instance.DoCycles(2);
+            Emulator.Instance.QueueCycles(2);
         }
 
         public void ExecuteInstructionPUSH()
@@ -1468,7 +1469,7 @@ namespace GameboyEmulator
             Word value = GetRegister(Instruction.Register1);
 
             Push16(value);
-            Emulator.Instance.DoCycles(3);
+            Emulator.Instance.QueueCycles(3);
 
         }
 
@@ -1552,11 +1553,11 @@ namespace GameboyEmulator
         public void ExecuteInstructionRST()
         {
             Push16(PC);
-            Emulator.Instance.DoCycles(2);
+            Emulator.Instance.QueueCycles(2);
 
             SetRegister(eRegisterType.PC, Instruction.Parameter);
 
-            Emulator.Instance.DoCycles(1);
+            Emulator.Instance.QueueCycles(1);
         }
 
         public void ExecuteInstructionHALT()
